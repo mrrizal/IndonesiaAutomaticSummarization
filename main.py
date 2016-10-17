@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, jsonify
 from werkzeug import secure_filename
 from Converter import Converter
+from Summarization import Summarization
 app = Flask(__name__)
 
 @app.route('/')
@@ -39,6 +40,16 @@ def upload():
 		else:
 			return "upload failed"
 	return 'request is not ajax'
+
+@app.route('/summarization', methods = ['GET', 'POST'])
+def summarization():
+	if request.is_xhr:
+		summary = Summarization()
+		sentences = summary.getSentence(request.form['text'])
+		for sentence in sentences:
+			print(sentence)
+		return "ye"
+	return "request is not ajax"
 	
 if __name__ == "__main__":
 	app.run(debug=True,threaded=True)

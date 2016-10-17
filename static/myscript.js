@@ -6,7 +6,7 @@ $(document).ready(function() {
 		$('#loader').show(); // loading image
 		$.ajax({
             type: 'POST',
-            url: 'http://localhost:5000/upload',
+            url: '/upload',
             data: form_data,
             contentType: false,
             cache: false,
@@ -31,6 +31,18 @@ $(document).ready(function() {
 	$('body').on('click', '#clear', function() {
 		$('#text').val("");
 
+	});
+
+	// button summarization
+	$('body').on('click', '#summarization', function() {
+		$.ajax({
+			url : '/summarization',
+			type : 'POST',
+			data : {'text': $('#text').val(),},
+			success : function(data) {
+				console.log(data);
+			}
+		})
 	});
 	
 });

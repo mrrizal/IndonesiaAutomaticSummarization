@@ -5,7 +5,8 @@ from pdfminer.layout import LAParams, LTTextBox, LTTextLine
 
 import docx2txt
 
-from odf import odf2xhtml
+from odf import text
+from odf.opendocument import load
 
 class Converter(object):
 
@@ -36,5 +37,10 @@ class Converter(object):
 
 	# convert odt to plain text
 	def odtToText(self, file):
-		data = odf2xhtml.load(file)
-		return str(data.text)
+		data = load(file)
+		textFile = data.getElementsByType(text.P)
+		result = ""
+		for i in textFile:
+			result+=str(i)+"\n"
+		return result
+

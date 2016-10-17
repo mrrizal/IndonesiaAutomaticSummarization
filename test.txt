@@ -1,0 +1,97 @@
+BAB I
+PENDAHULUAN
+1.1
+Latar Belakang
+Tidak dapat dipungkiri, pada zaman dimana internet sudah memasyarakat seperti
+sekarang ini penyebaran informasi pun kian cepat. Budaya membaca pun sedikit
+berubah, dari yang tadinya membaca buku kini mulai tergantikan dengan adanya ebook
+maupun artikel yang ada di internet. Sering kali penulis menjumpai buku, artikel maupun
+ebook dengan ukuran yang sangat panjang, sehingga pembaca mengalami kesulitan
+dalam mendapatkan informasi dari buku, artikel maupun ebook tersebut, selain itu
+dibutuhkan waktu yang lama pula untuk membaca keseluruhan buku atau ebook
+tersebut.
+Penggunaan peringkas teks dapat membantu memecahkan masalah ini. Oleh
+karena itu, Automatic Text Summarization diperlukan untuk mendapatkan hasil ringkasan
+teks yang dibutuhkan pengguna. Pada umumnya, teknik yang digunakan untuk
+meringkas sebuah teks adalah mengambil kalimat penting dalam artikel tekstual tersebut,
+namun pembentukan ringkasan dengan memotong kalimat secara paksa atau acak
+terhadap kalimat dapat menghilangkan bagian penting dari artikel, buku maupun ebook. 
+Pada tugas akhir digunakan metode Latent Semantic Analysis yaitu salah satu
+metode pada text summarization. Latent Semantic Analysis adalah metode statistik
+aljabar yang mengekstrak struktur semantik dari kata dan kalimat. Diharapkan dengan
+adanya aplikasi Automatic Text Summarization ini para pembaca artikel, buku maupun
+ebook dapat mendapatkan informasi dari suatu tulisan dengan lebih cepat dan mudah.
+Dari penjelasan, penulis hendak mengangkat judul dalam pembuatan tugas akhir :
+“REKAYASA PERANGKAT LUNAK AUTOMATIC TEXT SUMMARIZATION
+MENGGUNAKAN ALGORITMA LATENT SEMANTIC ANALYSIS”
+1.2 
+Rumusan Masalah
+Bagaimana menerapkan metode Latent Semantic Analysis untuk Automatic
+1
+2
+Summarization.
+1.3
+Tujuan
+Tujuan dari penulisan tugas akhir ini adalah sebagai berikut :
+1. Sebagai salah satu syarat kelulusan program pendidikan sarjana STMIK LIKMI.
+2. Dapat dijadikan sebagai referensi bagi penulis sejenis.
+3. Menerapkan ilmu di bidang Rekayasa Perangkat Lunak yang penulis dapatkan 
+dibangku kuliah.
+4. Menambah pengetahuan dalam Soft Computing khususnya Natural Language 
+Processing.
+5. Menambah pengetahuan dalam Machine Learning khususnya Unsupervised 
+Learning
+6. Menerapkan metode Latent Semantic Analysis untuk Automatic Text Summarization.
+1.4
+Batasan Masalah
+Adapun batasan masalah dari aplikasi ini adalah sebagai berikut :
+1. Teks atau tulisan yang akan diringkas menggunakan bahasa Indonesia.
+2. Hasil dari Summarizing adalah bahasa Indonesia.
+1.5
+Kegunaan Hasil
+Dengan adanya aplikasi ini, diharapkan pengguna dapat mendapatkan informasi
+dan intisari lebih cepat dari sebuah artikel artikel, buku atau ebook berbahasa Indonesia.
+1.6
+Metodologi
+Metode – metode yang digunakan penulis dalam pembuatan Tugas Akhir ini
+adalah sebagai berikut :
+1. Studi Kepustakaan
+Dalam metode ini penulis membaca beberapa jurnal, laporan penelitian, e-book, 
+internet dan lain-lain yang memiliki hubungan terkait dengan Automatic Text 
+Summarization 
+based on Latent Semantic Analysis yang mendukung 
+3
+pembuatan.
+2. Pemodelan
+Dalam metode ini penulis merancng use case, class diagram, activity diagram, 
+scenario diagram serta rancangan antar muka.
+3. Perancangan Sistem
+Dalam metode perangancan sistem yang akan dibangun, penulis menggunakan 
+metode prototyping, dengan metode perancangan tersebut diharapkan aplikasi dapat
+berjalan sesuai dengan yang diharapkan.
+1.7
+Sistematika Penulisan
+Adapun sistematika penulisan ini disusun dan dibagi kedalam 5 bab, adalah
+meliputi hal-hal sebagai berikut:
+BAB I PENDAHULUAN 
+Dalam bab ini dikemukakan mengenai latar belakang, rumusan masalah, maksud
+dan tujuan pembuatan aplikasi, batasan masalah, kegunaan hasil, metodologi yang
+digunakan, serta sistematika penulisan.
+BAB II LANDASAN TEORI 
+Bab ini menjelaskan tentang teori-teori yang digunakan penulis sebagai landasan
+dalam pembuatan Tugas Akhir ini yang mencakup penjelasan rekayasa perangkat lunak,
+Object Oriented Analysis and Design, dan penjelasan mengenai model prototyping.
+BAB III ANALISIS DAN PERANCANGAN 
+Bab ini berisi tentang analisis dan rancangan perangkat lunak yang dibuat
+penulis. Dikarenakan penulis menggunakan object oriented programming dalam
+mengembangkan aplikasi ini, maka analisi dan perangcangan yang dilakukan meliputi :
+pembuatan use case diagram, class diagram, activity diagram, dan scenario diagram.
+BAB IV IMPLEMENTASI DAN PENGUJIAN 
+Bab ini akan menguraikan tentang implementasi dari perancangan aplikasi
+Automatic Text Summarizing dan membahas tentang hasil pengujian dari perangkat
+lunak tersebut.
+BAB V KESIMPULAN DAN SARAN 
+Pada bab ini penulis memberikan kesimpulan dan saran mengenai pembuatan
+aplikasi Automatic Text Summarizing tersebut.
+4
+
