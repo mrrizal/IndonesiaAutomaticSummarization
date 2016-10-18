@@ -44,5 +44,29 @@ $(document).ready(function() {
 			}
 		})
 	});
+
+	// button save settings
+	$('body').on('click', '#saveSettings', function(e) {
+		e.preventDefault();
+		ratio = $('#ratio').val();
+		dtm = $('#dtm :selected').val();
+		sentenceSelection = $('#sentenceSelection :selected').val();
+		formatFile = $('#formatFile :selected').val();
+		$.ajax({
+			'url' : '/settings',
+			'type' : 'POST',
+			data : {
+				'ratio' : ratio,
+				'dtm' : dtm,
+				'sentenceSelection' : sentenceSelection,
+				'formatFile' : formatFile,
+			},
+			success : function(data) {
+				if(data=='sukses') {
+					swal("Save changes", "", "success");
+				}
+			}
+		})
+	});
 	
 });

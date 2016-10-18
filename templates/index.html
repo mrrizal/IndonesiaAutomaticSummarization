@@ -13,6 +13,9 @@
 		}
 	</style>
 	
+	<!-- sweet alert -->
+	<script type="text/javascript" src="{{ url_for('static', filename = 'sweetalert/dist/sweetalert.min.js') }}"></script>
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename = 'sweetalert/dist/sweetalert.css') }}">
 </head>
 <body>
 <div class="container">
@@ -55,32 +58,32 @@
 	                  <div class="form-group">
 	                   	<label for="ratio">Threshold in %</label>
 	                   	<br>
-	                   	<input type="number" class="form-control" min="10" max="100" step="5" value="10" name="">
+	                   	<input type="number" class="form-control" min="10" max="100" step="5" value="10" id="ratio">
 	                   	<!--
 	                   	<input id="ratio" data-slider-id='ex1Slider' type="text" data-slider-min="10" data-slider-max="100" data-slider-step="5" data-slider-value="50"/> -->
 	                  </div>
 	                  <div class="form-group">
 	                    <label for="dtmMethod">Document Term Matrix Method</label>
-	                    <select class="form-control">
-	                    	<option value="">Term Frequency Inverse Document Frequency (TFIDF)</option>
-	                    	<option value="">Term Frequency (TF)</option>
-	                    	<option value="">Boolean</option>
+	                    <select class="form-control" id="dtm">
+	                    	<option value="tfidf">Term Frequency Inverse Document Frequency (TFIDF)</option>
+	                    	<option value="tf">Term Frequency (TF)</option>
+	                    	<option value="boolean">Boolean</option>
 	                    </select>
 	                  </div>
 	                  <div class="form-group">
 	                    <label for="sentenceSelection">Sentence Selection Method</label>
-	                    <select class="form-control">
-	                    	<option value="">Gong & Liu</option>
-	                    	<option value="">Steinberger & Jezek</option>
-	                    	<option value="">Steinberger & Jezek</option>
-	                    	<option value="">CROSS</option>
+	                    <select class="form-control" id="sentenceSelection">
+	                    	<option value="gongliu">Gong & Liu</option>
+	                    	<option value="steinbergerjezek1">Steinberger & Jezek 1</option>
+	                    	<option value="steinbergerjezek2">Steinberger & Jezek 2</option>
+	                    	<option value="cross">CROSS</option>
 	                    </select>
 	                  </div>
                       <div class="form-group">
                         <label for="saveAs">Save As</label>
-                        <select class="form-control">
-                            <option>Plain Text (txt)</option>
-                            <option>PDF</option>
+                        <select class="form-control" id="formatFile">
+                            <option value="plainText">Plain Text (txt)</option>
+                            <option value="pdf">PDF</option>
                         </select>
                       </div>
 	                  <div class="checkbox">
@@ -93,7 +96,7 @@
 	            
 	            <!-- Modal Footer -->
 	            <div class="modal-footer">
-	                <button type="button" class="btn btn-primary">Save changes</button>
+	                <button type="button" class="btn btn-primary" id="saveSettings" data-dismiss="modal">Save changes</button>
 	                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
 	            </div>
 	        </div>
