@@ -35,12 +35,16 @@ $(document).ready(function() {
 
 	// button summarization
 	$('body').on('click', '#summarization', function() {
+		$('#text').hide();
+		$('#loader').show(); // loading image
 		$.ajax({
 			url : '/summarization',
 			type : 'POST',
 			data : {'text': $('#text').val(),},
 			success : function(data) {
-				console.log(data);
+			    $('#text').val(data);
+			    $('#loader').hide();
+       			$('#text').show();
 			}
 		})
 	});

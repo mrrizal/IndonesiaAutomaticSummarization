@@ -2,8 +2,10 @@ from flask import Flask, render_template, request, jsonify, session
 from werkzeug import secure_filename
 from Converter import Converter
 from Summarization import Summarization
+from numpy import absolute
 app = Flask(__name__)
 app.secret_key = 'rizalGanteng'
+
 @app.route('/')
 def index():
 	return render_template('index.html')
@@ -57,9 +59,33 @@ def upload():
 @app.route('/summarization', methods = ['GET', 'POST'])
 def summarization():
 	if request.is_xhr:
+		# untuk setting
+		ratio = session['ratio'] if 'ratio' in session else 50
+		dtmMethod = session['dtm'] if 'dtm' in session else 'tf'
+		sentenceSelectionMethod = session['sentenceSelection'] if 'sentenceSelection' in session else 'SteinbergerJezek2'
+		if dtmMethod == 'boolean':
+			dtmMethod = 'tf'
+			binary = True
+		else :
+			binary = False
+		
 		summary = Summarization()
 		sentences = summary.getSentence(request.form['text'])
-		return "summarization proccess"
+		if len(sentences) < 3:
+			return "Sorry, at least 3 sentences ..."
+		dtm = summary.getDTM(sentences, binaryMode=binary, mode=dtmMethod)
+		u, sigma, vt = summary.getSVD(dtm, sentences)
+		keys = summary.getSummary(sigma=absolute(sigma), vt=absolute(vt).tolist(), approach=sentenceSelectionMethod, aspectRatio=ratio).keys()
+		keys = sorted(keys)
+		summaryResult = []
+		for key in keys:
+			try:
+				summaryResult.append(sentences[key])
+			except:
+				pass
+		
+		result = "\n".join(summaryResult)
+		return result
 	return "request is not ajax"
 	
 if __name__ == "__main__":
