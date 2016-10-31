@@ -42,7 +42,8 @@ $(document).ready(function() {
 			type : 'POST',
 			data : {'text': $('#text').val(),},
 			success : function(data) {
-			    $('#text').val(data);
+			    console.log(data);
+			    $('#text').val(data['result']);
 			    $('#loader').hide();
        			$('#text').show();
 			}

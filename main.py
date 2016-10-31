@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, jsonify, session
 from werkzeug import secure_filename
 from Converter import Converter
 from Summarization import Summarization
-from numpy import absolute
+from numpy import absolute, sqrt
 app = Flask(__name__)
 app.secret_key = 'rizalGanteng'
 
@@ -61,7 +61,8 @@ def summarization():
 	if request.is_xhr:
 		# untuk setting
 		ratio = session['ratio'] if 'ratio' in session else 50
-		dtmMethod = session['dtm'] if 'dtm' in session else 'tf'
+		tmpdtm = session['dtm'] if 'dtm' in session else 'tf'
+		dtmMethod = tmpdtm
 		sentenceSelectionMethod = session['sentenceSelection'] if 'sentenceSelection' in session else 'SteinbergerJezek2'
 		if dtmMethod == 'boolean':
 			dtmMethod = 'tf'
@@ -69,10 +70,11 @@ def summarization():
 		else :
 			binary = False
 		
+		# summarization
 		summary = Summarization()
 		sentences = summary.getSentence(request.form['text'])
 		if len(sentences) < 3:
-			return "Sorry, at least 3 sentences ..."
+			return jsonify({'result':'Sorry, at least 3 sentences ...'})
 		dtm = summary.getDTM(sentences, binaryMode=binary, mode=dtmMethod)
 		u, sigma, vt = summary.getSVD(dtm, sentences)
 		keys = summary.getSummary(sigma=absolute(sigma), vt=absolute(vt).tolist(), approach=sentenceSelectionMethod, aspectRatio=ratio).keys()
@@ -83,9 +85,26 @@ def summarization():
 				summaryResult.append(sentences[key])
 			except:
 				pass
-		
-		result = "\n".join(summaryResult)
-		return result
+
+		# evaluation main topic
+		dtmSummary = summary.getDTM(summaryResult, mode=dtmMethod)
+		uSummary, sigmaSummary, vtSummary = summary.getSVD(dtmSummary, summaryResult)
+		evaluationMainTopic = summary.getEvaluationMainTopic(sorted(absolute(u[0])), sorted(absolute(uSummary[0])))
+
+		# evaluation term significace
+		uf = summary.getTermVector(u, sigma)
+		ue = summary.getTermVector(uSummary, sigmaSummary)
+		evaluationTermSignificance = summary.getEvaluationMainTopic(sorted(absolute(uf)), sorted(absolute(ue)))
+
+		result = {}
+		result['ratio'] = ratio 
+		result['dtmMethod'] = tmpdtm
+		result['sentenceSelectionMethod'] = sentenceSelectionMethod
+		result['result'] = "\n".join(summaryResult)
+		result['evaluationMainTopic'] = evaluationMainTopic
+		result['evaluationTermSignificance'] = evaluationTermSignificance
+		# print(result)
+		return jsonify(result)
 	return "request is not ajax"
 	
 if __name__ == "__main__":

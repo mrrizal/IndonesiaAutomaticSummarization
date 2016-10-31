@@ -143,17 +143,23 @@ class Summarization(object):
 
 		return value
 
-	# UNTUK EVALUATION MAIN TOPIC SIMILARITY, YANG TERM SIGNIFICANCE CAN DIKERJAKEUN
-	# def getEvaluation(self, ue, uf):
-	# 	evaluation = []
-	# 	for i in range(len(ue)):
-	# 		try:
-	# 			evaluation.append(abs(ue[i]*uf[i]))
-	# 		except IndexError:
-	# 			pass
+	# untuk evaluation main topic
+	def getEvaluationMainTopic(self, ue, uf):
+		evaluation = []
+		for i in range(len(ue)):
+			try:
+				evaluation.append(abs(ue[i]*uf[i]))
+			except IndexError:
+				pass
 
-	# 	return sum(evaluation) 
+		return sum(evaluation) 
 
+	# untuk evaluation term significace
+	def getTermVector(self, u, sigma):
+		result = []
+		for i in range(len(u)):
+			result.append(sqrt(sum((j*k)**2 for j, k in zip(absolute(u[i]), absolute(sigma)))))
+		return result
 
 
 # KEU ENGKE GAN
@@ -190,11 +196,11 @@ class Summarization(object):
 # 	# print("Matrix sigma : %i " % (len(sigma)))
 # 	# print("Matrix U(mxn) :  %i x %i " % (len(u), len(u[0])))
 
-# 	# #  menampilkan hasil evaluasi(lsa-based)
-# 	# dtmSummary = summary.getDTM(summaryResult, mode='CountVectorizer')
-# 	# uSummary, sigmaSummary, vtSummary = summary.getSVD(dtmSummary, summaryResult)
-# 	# evaluation = summary.getEvaluation(sorted(u[0]), sorted(uSummary[0]))
-# 	# print("Evaluation : ", evaluation) 
+	#  menampilkan hasil evaluasi(lsa-based)
+	# dtmSummary = summary.getDTM(summaryResult, mode='CountVectorizer')
+	# uSummary, sigmaSummary, vtSummary = summary.getSVD(dtmSummary, summaryResult)
+	# evaluation = summary.getEvaluation(sorted(u[0]), sorted(uSummary[0]))
+	# print("Evaluation : ", evaluation) 
 	
 	
 	
