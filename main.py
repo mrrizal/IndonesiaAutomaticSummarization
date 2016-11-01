@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, jsonify, session
 from werkzeug import secure_filename
-from Converter import Converter
-from Summarization import Summarization
+from models.Summarization import Summarization
+from models.Converter import Converter
 from numpy import absolute, sqrt
 app = Flask(__name__)
 app.secret_key = 'rizalGanteng'
@@ -75,6 +75,7 @@ def summarization():
 		sentences = summary.getSentence(request.form['text'])
 		if len(sentences) < 3:
 			return jsonify({'result':'Sorry, at least 3 sentences ...'})
+			
 		dtm = summary.getDTM(sentences, binaryMode=binary, mode=dtmMethod)
 		u, sigma, vt = summary.getSVD(dtm, sentences)
 		keys = summary.getSummary(sigma=absolute(sigma), vt=absolute(vt).tolist(), approach=sentenceSelectionMethod, aspectRatio=ratio).keys()
@@ -89,7 +90,9 @@ def summarization():
 		# evaluation main topic
 		dtmSummary = summary.getDTM(summaryResult, mode=dtmMethod)
 		uSummary, sigmaSummary, vtSummary = summary.getSVD(dtmSummary, summaryResult)
-		evaluationMainTopic = summary.getEvaluationMainTopic(sorted(absolute(u[0])), sorted(absolute(uSummary[0])))
+		uf = [i[0] for i in u]
+		ue = [i[0] for i in uSummary]
+		evaluationMainTopic = summary.getEvaluationMainTopic(sorted(absolute(uf)), sorted(absolute(ue)))
 
 		# evaluation term significace
 		uf = summary.getTermVector(u, sigma)
