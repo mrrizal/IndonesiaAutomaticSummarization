@@ -1,0 +1,93 @@
+{% extends "admin_page/base.html" %}
+{% block evaluation %}
+    active
+{% endblock evaluation %}
+{% block headers %}
+<div class="row">
+    <div class="col-lg-12">
+        <h1 class="page-header">
+            Evaluation
+        </h1>
+        <ol class="breadcrumb">
+            <li class="active">
+                <i class="glyphicon glyphicon-home"></i> Evaluation
+            </li>
+            <li><a href="/admin/evaluation_data">Evaluation Data</a></li>
+        </ol>
+    </div>
+</div>    
+{% endblock headers %}
+{% block content %}
+<!-- /.row -->
+<table cellpadding="10">
+    <tr>
+        <td>Filter :</td>
+        <td>&nbsp</td>
+        <td>
+            <select class="form-control input-sm">
+                <option>DTM Method</option>
+                <option>TF</option>
+                <option>TF-IDF</option>
+                <option>Boolean</option>
+            </select>
+        </td>
+        <td>&nbsp</td>
+        <td>
+            <select class="form-control input-sm">
+                <option>Sentence Selection Method</option>
+                <option>Gong & Liu</option>
+                <option>Steinberger & Jezek</option>
+                <option>Steinberger & Jezek 2</option>
+                <option>Cross</option>
+            </select>
+        </td>
+        <td>&nbsp</td>
+        <td>
+            <select class="form-control input-sm">
+                <option>Aspect Ratio</option>
+                <option>10 %</option>
+                <option>20 %</option>
+                <option>30 %</option>
+                <option>40 %</option>
+                <option>50 %</option>
+                <option>60 %</option>
+                <option>70 %</option>
+                <option>80 %</option>
+                <option>90 %</option>
+            </select>
+        </td>
+        <td>&nbsp</td>
+        <td>
+            <button type="button" class="btn btn-primary btn-sm">Filter</button>
+        </td>
+    </tr>
+</table>
+<br>
+<table class="table table-bordered">
+    <thead style="text-align:center">
+        <tr>
+            <th rowspan="2" style="vertical-align:middle">No</th>
+            <th rowspan="2" style="vertical-align:middle"><center>Document Term Matrix</center></th>
+            <th rowspan="2" style="vertical-align:middle"><center>Sentence Selection</center></th>
+            <th rowspan="2" style="vertical-align:middle"><center>Aspec Ratio</center></th>
+            <th colspan="2"><center>Average Score</center></th>
+        </tr>
+        <tr>
+            <th><center>Main Topic</center></th>
+            <th><center>Term Significace</center></th>
+        </tr>
+        
+    </thead>
+    <tbody>
+        <tr>
+            <td>1</td>
+            <td>TF</td>
+            <td>Gong & Liu</td>
+            <td><center>10 %</center></td>
+            <td><center>0.88</center></td>
+            <td><center>0.77</center></td>
+        </tr>
+    </tbody>
+</table>
+{% endblock content %}
+<!-- Page Heading -->

@@ -10,6 +10,22 @@ app.secret_key = 'rizalGanteng'
 def index():
 	return render_template('index.html')
 
+@app.route('/admin')
+def admin():
+	return render_template('admin_page/index.html')
+
+@app.route('/admin/evaluation_data')
+def evaluation_data():
+	return render_template('admin_page/evaluation_data.html')
+
+@app.route('/admin/add')
+def add_admin():
+	return render_template('admin_page/add.html')
+
+@app.route('/admin/admin_data')
+def admin_data():
+	return render_template('admin_page/admin_data.html')
+
 @app.route('/settings', methods = ['GET', 'POST'])
 def settings():
 	if request.is_xhr:

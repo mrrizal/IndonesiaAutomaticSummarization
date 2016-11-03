@@ -1,0 +1,38 @@
+{% extends "admin_page/base.html" %}
+{% block admin %}
+	active
+{% endblock admin %}
+{% block headers %}
+<div class="row">
+    <div class="col-lg-12">
+        <h1 class="page-header">
+        	Admin
+        </h1>
+        <ol class="breadcrumb">
+            <li class="active">
+                <i class="glyphicon glyphicon-user"></i> Add Admin
+            </li>
+            <li><a href="/admin/admin_data">Admin Data</a></li>
+        </ol>
+    </div>
+</div>  
+{% endblock headers %}
+{% block content %}
+<form>
+    <div class="col-xs-6">
+    	<div class="form-group">
+        	<label for="username">Username:</label>
+        	<input type="text" class="form-control" id="username" name="username">
+      	</div>
+      	<div class="form-group">
+        	<label for="password">Password:</label>
+        	<input type="password" class="form-control" id="password" name="password">
+      	</div>
+      	<div class="form-group">
+        	<label><input type="checkbox" id="superAdmin" name="superAdmin"> Super Admin</label>
+      	</div>
+      	<button type="submit" class="btn btn-default">Submit</button>
+      	<button type="reset" class="btn btn-default">Clear</button>
+    </div> 	
+</form>
+{% endblock content %}
