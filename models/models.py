@@ -16,7 +16,7 @@ class Admin(Base):
 	superAdmin = Column(Boolean(), default=0)
 
 	def __repr__(self):
-		return "<User(username='%s', password='%s', superAdmin='%s')>" % (self.username, self.password, self.superAdmin)
+		return "<Admin(id='%s', username='%s', password='%s', superAdmin='%s')>" % (self.username, self.password, self.superAdmin)
 
 class Evaluation(Base):
 	__tablename__ = 'evaluation'
@@ -37,7 +37,7 @@ class Evaluation(Base):
 def main():
 	Base.metadata.create_all(engine)
 
-'''
-if __name__ == "__main__":
-	main()
-'''
+
+# if __name__ == "__main__":
+# 	main()
+

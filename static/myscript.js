@@ -131,6 +131,7 @@ $(document).ready(function() {
                     "</center></td><td><center><button type='button' id='deleteDataAdmin' class='btn btn-danger btn-xs' value="+data[i].id+">Delete</button></center></td></tr>";
                 }
                 $('#adminData').html(result);
+                pagination();
             }
         });
     }
