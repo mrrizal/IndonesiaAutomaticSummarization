@@ -71,8 +71,7 @@ def getDataAdmin():
 		tmp['username'] = data.username
 		tmp['superAdmin'] = data.superAdmin
 		admin.append(tmp)
-	print(admin)
-	print(session['page'])
+	
 	return jsonify(admin)
 
 # page for show list of admin
