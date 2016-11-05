@@ -21,11 +21,7 @@
 <table cellpadding="10">
     <tr>
         <td>
-            <input type="text" name="username" class="form-control input-sm" id="username" placeholder="Username">
-        </td>
-        <td>&nbsp</td>
-        <td>
-            <button type="button" class="btn btn-primary btn-sm">Search</button>
+            <input type="text" name="username" class="form-control input-sm" id="username" placeholder="Search ...">
         </td>
     </tr>
 </table>
@@ -39,17 +35,13 @@
             <th><center>Action</center></th>                            
         </tr>
     </thead>
-    <tbody>
-        <tr>
-            <td>1</td>
-            <td>Rizal</td>
-            <td><center>True</center></td>
-            <td>
-                <center>
-                    <button type="button" class="btn btn-danger btn-xs">Delete</button>
-                </center>
-            </td>
-        </tr>
+    <tbody id="adminData">
     </tbody>
 </table>        
+<nav aria-label="Page navigation">
+    <ul class="pagination" id="pagination"></ul>
+</nav>
+<div hidden="true" id="currentPage"></div>
 {% endblock content %}
+
+{% block page %}{{ totalPage }}{% endblock page %}

@@ -1,31 +1,103 @@
-from flask import Flask, render_template, request, jsonify, session
+from flask import Flask, render_template, request, jsonify, session, redirect, url_for
 from werkzeug import secure_filename
 from models.Summarization import Summarization
 from models.Converter import Converter
 from numpy import absolute, sqrt
+import models.models
+from models.models import Admin, Evaluation
+import sqlalchemy
+import hashlib
+import math
+
 app = Flask(__name__)
 app.secret_key = 'rizalGanteng'
 
+# index
 @app.route('/')
 def index():
 	return render_template('index.html')
 
+# index admin page
 @app.route('/admin')
 def admin():
 	return render_template('admin_page/index.html')
 
+# evaluation page
 @app.route('/admin/evaluation_data')
 def evaluation_data():
 	return render_template('admin_page/evaluation_data.html')
 
-@app.route('/admin/add')
+# page for add admin
+@app.route('/admin/add', methods = ['GET', 'POST'])
 def add_admin():
+	if request.is_xhr:
+		if (request.form is not None and request.form['username'].strip() != "" and request.form['password'].strip() != ""):
+			m = hashlib.md5()
+			result = {}
+			username = request.form['username']
+			m.update(request.form['password'].encode('utf-8'))
+			password = m.hexdigest()
+			superAdmin = True if request.form['superAdmin'] == '1' else False
+			try :
+				admin = Admin(username=username, password=password, superAdmin=superAdmin)
+				database = models.models.Session()
+				database.add(admin)
+				database.commit()
+				result['message'] = 'success'
+				result['username'] = request.form['username']
+			except sqlalchemy.exc.IntegrityError:
+				result ['message'] = 'username already axist'
+
+			return jsonify(result)
+
 	return render_template('admin_page/add.html')
 
-@app.route('/admin/admin_data')
-def admin_data():
-	return render_template('admin_page/admin_data.html')
+# get data admin
+@app.route('/admin/dataAdmin', methods=['GET', 'POST'])
+def getDataAdmin():
+	session['page'] = request.form['page'] if 'page' in request.form else 1
+	database = models.models.Session()
+	page = session['page']
+	
+	if 'username' in request.form:
+		datas = database.query(Admin).filter(Admin.username.like('%'+request.form['username']+'%')).all()
+	else:
+		datas = database.query(Admin).limit(10).offset((int(page)-1)*10).all()
+	#datas = database.query(Admin).limit(10).offset((int(page)-1)*10).all()
+	admin = []
+	for data in datas:
+		tmp = {}
+		tmp['id'] = data.id
+		tmp['username'] = data.username
+		tmp['superAdmin'] = data.superAdmin
+		admin.append(tmp)
+	print(admin)
+	print(session['page'])
+	return jsonify(admin)
 
+# page for show list of admin
+@app.route('/admin/admin_data', methods = ['GET', 'POST'])
+def admin_data():
+	database = models.models.Session()
+	totalPage = math.ceil(database.query(Admin).count()/10)
+	return render_template('admin_page/admin_data.html', totalPage=totalPage)
+
+# for delete admin
+@app.route('/admin/delete', methods = ['GET', 'POST'])
+def admin_delete():
+	if request.is_xhr:
+		if request.form is not None and request.form['id'].strip() != "":
+			id = request.form['id']
+			database = models.models.Session()
+			try:
+				database.query(Admin).filter(Admin.id==id).delete(synchronize_session=False)
+				database.commit()
+				return "success"
+			except e:
+				pass
+	return "failed"
+
+# setting summarization
 @app.route('/settings', methods = ['GET', 'POST'])
 def settings():
 	if request.is_xhr:
