@@ -12,11 +12,71 @@ import math
 app = Flask(__name__)
 app.secret_key = 'rizalGanteng'
 
-# index
-@app.route('/')
-def index():
-	return render_template('index.html')
 
+#=========================================FOR EVALUATION======================================
+# index (isinya evaluation gan)
+
+# evaluation page
+@app.route('/admin/evaluation_data')
+def evaluation_data():
+	if 'id' in session and 'username' in session and 'superAdmin' in session:
+		database = models.models.Session()
+		totalPage = math.ceil(database.query(Evaluation).count()/10)
+		return render_template('admin_page/evaluation_data.html', totalPage=totalPage)
+	return redirect(url_for('login'))
+
+# for get evaluation data
+@app.route('/admin/evaluationdata', methods=['GET', 'POST'])
+def getDataEvaluation():
+	if 'id' in session and 'username' in session:
+		session['page'] = request.form['page'] if 'page' in request.form else 1
+		page = session['page']
+		database = models.models.Session()
+		datas = database.query(Evaluation).limit(10).offset((int(page)-1)*10).all()
+		evaluation = []
+		for data in datas:
+			tmp = {}
+			tmp['id'] = data.id
+			tmp['admin'] = database.query(Admin.username).filter(Admin.id==data.idAdmin).first()[0]
+			tmp['dtmMethod'] = data.dtmMethod
+			tmp['sentenceSelectionMethod'] = data.sentenceSelectionMethod
+			tmp['aspectRatio'] = data.aspectRatio
+			tmp['mainTopic'] = data.mainTopic
+			tmp['termSignificance'] = data.termSignificance
+			evaluation.append(tmp)
+
+		return jsonify(evaluation)
+
+	return 'hello world'
+
+@app.route('/admin/evaluation_delete', methods=['GET', 'POST'])
+def evaluation_delete():
+	if 'id' in session and 'username' in session:
+		if session['superAdmin'] != True:
+			return redirect(url_for('admin'))
+		
+		if request.is_xhr:
+			if request.form is not None and request.form['id'].strip() != "":
+				id = request.form['id']
+				database = models.models.Session()
+				try:
+					database.query(Evaluation).filter(Evaluation.id==id).delete(synchronize_session=False)
+					database.commit()
+					return "success"
+				except e:
+					pass
+		return "failed"
+	return redirect(url_for('login'))
+
+# index admin page
+@app.route('/admin')
+def admin():
+	if 'id' in session and 'username' in session and 'superAdmin' in session:
+		return render_template('admin_page/index.html')
+	return redirect(url_for('login'))
+
+
+#===============================================ADMIN================================================
 # login page 
 @app.route('/login', methods = ['GET','POST'])
 def login():
@@ -42,20 +102,6 @@ def login():
 @app.route('/logout')
 def logout():
 	session.clear()
-	return redirect(url_for('login'))
-
-# index admin page
-@app.route('/admin')
-def admin():
-	if 'id' in session and 'username' in session and 'superAdmin' in session:
-		return render_template('admin_page/index.html')
-	return redirect(url_for('login'))
-
-# evaluation page
-@app.route('/admin/evaluation_data')
-def evaluation_data():
-	if 'id' in session and 'username' in session and 'superAdmin' in session:
-		return render_template('admin_page/evaluation_data.html')
 	return redirect(url_for('login'))
 
 # change password
@@ -106,9 +152,10 @@ def add_admin():
 		return render_template('admin_page/add.html')
 	return redirect(url_for('login'))
 
+
 # get data admin
-@app.route('/admin/dataAdmin', methods=['GET', 'POST'])
-def getDataAdmin():
+@app.route('/admin/admindata', methods=['GET', 'POST'])
+def getAdminData():
 	if 'id' in session and 'username' in session and 'superAdmin' in session:
 		if session['superAdmin'] != True:
 			return redirect(url_for('admin'))
@@ -164,6 +211,11 @@ def admin_delete():
 					pass
 		return "failed"
 	return redirect(url_for('login'))
+
+#==============================================SUMMARIZATION/FRONT-END=====================================
+@app.route('/')
+def index():
+	return render_template('index.html')
 
 # setting summarization
 @app.route('/settings', methods = ['GET', 'POST'])

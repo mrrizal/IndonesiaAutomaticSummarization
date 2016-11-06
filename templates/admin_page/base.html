@@ -47,7 +47,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="index.html">Hello, {{ session['username'] }}</a>
+                <a class="navbar-brand" href="/">Hello, {{ session['username'] }}</a>
             </div>
             <!-- Top Menu Items -->
             <ul class="nav navbar-right top-nav">
@@ -141,15 +141,17 @@
                 visiblePages: 5,
                 onPageClick: function (event, page) {
                     // console.info(page);
-					getDataAdmin(page);
+                    {% block callFunction %}
+                        
+                    {% endblock callFunction %}
                 }
             });
             // console.info(obj.data());
         });
             
-        function getDataAdmin(page=1) {
+        function getAdminData(page=1) {
             $.ajax({
-                url : '/admin/dataAdmin',
+                url : '/admin/admindata',
                 type : 'POST',
                 data : { 'page':page },
                 success : function(data) {
@@ -160,6 +162,23 @@
                         "</center></td><td><center><button type='button' id='deleteDataAdmin' class='btn btn-danger btn-xs' value="+data[i].id+">Delete</button></center></td></tr>";
                     }
                     $('#adminData').html(result);
+                    $('#currentPage').text(page);
+                }
+            });
+        }
+
+        function getEvaluationData(page=1) {
+            $.ajax({
+                url : '/admin/evaluationdata',
+                type : 'POST',
+                data : {'page':page},
+                success : function(data) {
+                    console.log(data);
+                    result = "";
+                    for (var i = 0; i < data.length; i++) {
+                        result += " <tr><td>"+(parseInt(i)+1+((page-1)*10))+"</td><td>"+data[i].admin+"</td><td>"+data[i].dtmMethod+"</td><td>"+data[i].sentenceSelectionMethod+"</td><td><center>"+data[i].aspectRatio+" %</center></td><td>"+data[i].mainTopic+"</td><td>"+data[i].termSignificance+"</td><td><center><button type='button' class='btn btn-danger btn-xs' id='deleteDataEvaluation' value="+data[i].id+">Delete</button></center></td></tr>"
+                    }
+                    $('#evaluationData').html(result);
                     $('#currentPage').text(page);
                 }
             });

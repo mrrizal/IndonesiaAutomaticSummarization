@@ -158,10 +158,10 @@ $(document).ready(function() {
 		return false;
 	});
 
-	function getDataAdmin() {
+	function getAdminData() {
 		page = $('#currentPage').text();
         $.ajax({
-            url : '/admin/dataAdmin',
+            url : '/admin/admindata',
             type : 'POST',
             data : { 'page': page },
             success : function(data) {
@@ -178,6 +178,24 @@ $(document).ready(function() {
         });
     }
 
+    function getEvaluationData(page=1) {
+    	page = $('#currentPage').text();
+        $.ajax({
+            url : '/admin/evaluationdata',
+            type : 'POST',
+            data : {'page':page},
+            success : function(data) {
+                // console.log(data);
+                result = "";
+                for (var i = 0; i < data.length; i++) {
+                    result += " <tr><td>"+(parseInt(i)+1+((page-1)*10))+"</td><td>"+data[i].admin+"</td><td>"+data[i].dtmMethod+"</td><td>"+data[i].sentenceSelectionMethod+"</td><td><center>"+data[i].aspectRatio+" %</center></td><td>"+
+                    data[i].mainTopic+"</td><td>"+data[i].termSignificance+"</td><td><center><button type='button' class='btn btn-danger btn-xs' id='deleteDataEvaluation' value="+data[i].id+">Delete</button></center></td></tr>"
+                }
+                $('#evaluationData').html(result);
+            }
+        });
+    }
+
 	// button delete data admin
 	$('body').on('click', '#deleteDataAdmin', function() {
 		$.ajax({
@@ -186,7 +204,20 @@ $(document).ready(function() {
 			data : { 'id':$(this).val() },
 			success : function(data) {
 				// console.log(data);
-				getDataAdmin();
+				getAdminData();
+			}
+		});
+	});
+
+	// button delete data evaluation
+	$('body').on('click', '#deleteDataEvaluation', function() {
+		$.ajax({
+			url : '/admin/evaluation_delete',
+			type : 'POST',
+			data : { 'id':$(this).val() },
+			success : function(data) {
+				console.log(data);
+				getEvaluationData();
 			}
 		});
 	});
@@ -195,7 +226,7 @@ $(document).ready(function() {
 	$('body').on('keyup', '#username', function() {
 		page = $('#currentPage').text();
 		$.ajax({
-            url : '/admin/dataAdmin',
+            url : '/admin/admindata',
             type : 'POST',
             data : { 'username' : $(this).val() },
             success : function(data) {
