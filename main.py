@@ -20,6 +20,8 @@ def index():
 # login page 
 @app.route('/login', methods = ['GET','POST'])
 def login():
+	if 'id' in session or 'username' in session or 'superAdmin' in session:
+		return redirect(url_for('admin'))
 	if 'username' in request.form and 'password' in request.form:
 		m = hashlib.md5()
 		m.update(request.form['password'].encode('utf-8'))
@@ -154,6 +156,8 @@ def settings():
 			session['dtm'] = request.form['dtm']
 			session['sentenceSelection'] = request.form['sentenceSelection']
 			session['formatFile'] = request.form['formatFile']
+			if 'id' in session and 'username' in session and 'superAdmin' in session:
+				session['evaluate'] = request.form['evaluate']
 			print(session)
 			return 'sukses'
 		return 'sukses'
@@ -207,43 +211,57 @@ def summarization():
 			binary = False
 		
 		# summarization
-		summary = Summarization()
-		sentences = summary.getSentence(request.form['text'])
-		if len(sentences) < 3:
-			return jsonify({'result':'Sorry, at least 3 sentences ...'})
+		try :
+			summary = Summarization()
+			sentences = summary.getSentence(request.form['text'])
+			if len(sentences) < 3:
+				return jsonify({'result':'Sorry, at least 3 sentences ...'})
+				
+			dtm = summary.getDTM(sentences, binaryMode=binary, mode=dtmMethod)
+			u, sigma, vt = summary.getSVD(dtm, sentences)
+			keys = summary.getSummary(sigma=absolute(sigma), vt=absolute(vt).tolist(), approach=sentenceSelectionMethod, aspectRatio=ratio).keys()
+			keys = sorted(keys)
+			summaryResult = []
+			for key in keys:
+				try:
+					summaryResult.append(sentences[key])
+				except:
+					pass
+
+			result = {}
 			
-		dtm = summary.getDTM(sentences, binaryMode=binary, mode=dtmMethod)
-		u, sigma, vt = summary.getSVD(dtm, sentences)
-		keys = summary.getSummary(sigma=absolute(sigma), vt=absolute(vt).tolist(), approach=sentenceSelectionMethod, aspectRatio=ratio).keys()
-		keys = sorted(keys)
-		summaryResult = []
-		for key in keys:
-			try:
-				summaryResult.append(sentences[key])
-			except:
-				pass
+			if 'evaluate' in session and int(session['evaluate']) == 1 and 'id' in session and 'username' in session and 'superAdmin' in session:
+				# evaluation main topic
+				dtmSummary = summary.getDTM(summaryResult, mode=dtmMethod)
+				uSummary, sigmaSummary, vtSummary = summary.getSVD(dtmSummary, summaryResult)
+				uf = [i[0] for i in u]
+				ue = [i[0] for i in uSummary]
+				evaluationMainTopic = summary.getEvaluationMainTopic(sorted(absolute(uf)), sorted(absolute(ue)))
 
-		# evaluation main topic
-		dtmSummary = summary.getDTM(summaryResult, mode=dtmMethod)
-		uSummary, sigmaSummary, vtSummary = summary.getSVD(dtmSummary, summaryResult)
-		uf = [i[0] for i in u]
-		ue = [i[0] for i in uSummary]
-		evaluationMainTopic = summary.getEvaluationMainTopic(sorted(absolute(uf)), sorted(absolute(ue)))
+				# evaluation term significace
+				uf = summary.getTermVector(u, sigma)
+				ue = summary.getTermVector(uSummary, sigmaSummary)
+				evaluationTermSignificance = summary.getEvaluationMainTopic(sorted(absolute(uf)), sorted(absolute(ue)))
 
-		# evaluation term significace
-		uf = summary.getTermVector(u, sigma)
-		ue = summary.getTermVector(uSummary, sigmaSummary)
-		evaluationTermSignificance = summary.getEvaluationMainTopic(sorted(absolute(uf)), sorted(absolute(ue)))
+				result['evaluationMainTopic'] = evaluationMainTopic
+				result['evaluationTermSignificance'] = evaluationTermSignificance
+				result['ratio'] = ratio 
+				result['dtmMethod'] = tmpdtm
+				result['sentenceSelectionMethod'] = sentenceSelectionMethod
 
-		result = {}
-		result['ratio'] = ratio 
-		result['dtmMethod'] = tmpdtm
-		result['sentenceSelectionMethod'] = sentenceSelectionMethod
-		result['result'] = "\n".join(summaryResult)
-		result['evaluationMainTopic'] = evaluationMainTopic
-		result['evaluationTermSignificance'] = evaluationTermSignificance
-		# print(result)
-		return jsonify(result)
+				# insert data to evaluation table
+				database = models.models.Session()
+				evaluation = Evaluation(idAdmin=session['id'], dtmMethod=tmpdtm, sentenceSelectionMethod=sentenceSelectionMethod, 
+					aspectRatio=ratio, mainTopic=evaluationMainTopic, termSignificance=evaluationTermSignificance)
+				database.add(evaluation)
+				database.commit()
+
+
+			result['result'] = "\n".join(summaryResult)
+			# print(result)
+			return jsonify(result)
+		except:
+			return jsonify({'result':'Sorry something wrong ...'})
 	return "request is not ajax"
 	
 if __name__ == "__main__":

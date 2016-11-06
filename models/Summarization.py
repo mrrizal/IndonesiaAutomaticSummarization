@@ -5,6 +5,11 @@ from sklearn.preprocessing import Normalizer
 import pandas as pd
 from numpy import linalg, sqrt, absolute
 from models.stem import IndonesianStemmer 
+# from stem import IndonesianStemmer
+import warnings
+
+# turn warning to error
+warnings.filterwarnings("error")
 
 class Summarization(object):
 
@@ -22,7 +27,9 @@ class Summarization(object):
 	def stopWordIndonesia(self, doc):
 		analyzer = CountVectorizer().build_analyzer()
 		f = open('static/stopwords_id.txt')
+		# f = open('../static/stopwords_id.txt')
 		stopwords = [word.rstrip('\n') for word in f.readlines()]
+		f.close()
 		return (word for word in analyzer(doc) if word not in stopwords)
 	
 	def getDTM(self, sentences, binaryMode=False, mode='tfidf'):
@@ -73,14 +80,20 @@ class Summarization(object):
 					maxvalue = 0
 					index = 0
 					index1 = 0
-					for i in range(len(vt)):
-						for j in range(len(vt[i])):
-							if vt[i][j] > maxvalue:
-								maxvalue = vt[i][j]
-								index = i
-								index1 = j
-					vt[index][index1] = 0
-					value[index1] = maxvalue
+					for i in range(len(vt[0])):
+						if vt[0][i] > maxvalue:
+							maxvalue = vt[0][i]
+							index = i
+
+					# for i in range(len(vt)):
+					# 	for j in range(len(vt[i])):
+					# 		if vt[i][j] > maxvalue:
+					# 			maxvalue = vt[i][j]
+					# 			index = i
+					# 			index1 = j
+
+					vt[0][index] = 0
+					value[index] = maxvalue
 
 			# metode milik Steinberger dan Jezek
 			elif approach == 'SteinbergerJezek':
@@ -150,7 +163,7 @@ class Summarization(object):
 			try:
 				evaluation.append(abs(ue[i]*uf[i]))
 			except IndexError:
-				pass
+				evaluation.append(0)
 
 		return sum(evaluation) 
 
@@ -158,15 +171,19 @@ class Summarization(object):
 	def getTermVector(self, u, sigma):
 		result = []
 		for i in range(len(u)):
-			result.append(sqrt(sum((j*k)**2 for j, k in zip(absolute(u[i]), absolute(sigma)))))
+			try:
+				result.append(sqrt(sum((j*k)**2 for j, k in zip(absolute(u[i]), absolute(sigma)))))
+			except:
+				result.append(0)
 		return result
 
 
 # KEU ENGKE GAN
 # main program
 # def main():
-# 	file = open('teks_indonesia.txt', 'r')
+# 	file = open('berita.txt', 'r')
 # 	data = file.read()
+# 	file.close()
 
 # 	summary = Summarization()
 	
@@ -179,7 +196,7 @@ class Summarization(object):
 # 	print("Matrix VT(nxn) : %i x %i " % (len(vt), len(vt[0])))
 	
 # 	# menampilkan hasil summary
-# 	keys = summary.getSummary(sigma=absolute(sigma), vt=absolute(vt).tolist(), approach='SteinbergerJezek2').keys()
+# 	keys = summary.getSummary(sigma=absolute(sigma), vt=absolute(vt).tolist(), approach='GongLiu').keys()
 # 	keys = sorted(keys)
 # 	summaryResult = []
 # 	for key in keys:

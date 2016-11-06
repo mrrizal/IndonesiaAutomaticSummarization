@@ -53,10 +53,11 @@ $(document).ready(function() {
 	// button save settings
 	$('body').on('click', '#saveSettings', function(e) {
 		e.preventDefault();
-		ratio = $('#ratio').val();
+		ratio = $('#ratio :selected').val();
 		dtm = $('#dtm :selected').val();
 		sentenceSelection = $('#sentenceSelection :selected').val();
 		formatFile = $('#formatFile :selected').val();
+		evaluate = $('#evaluate').is(':checked') ? 1 : 0;
 		$.ajax({
 			'url' : '/settings',
 			'type' : 'POST',
@@ -65,6 +66,7 @@ $(document).ready(function() {
 				'dtm' : dtm,
 				'sentenceSelection' : sentenceSelection,
 				'formatFile' : formatFile,
+				'evaluate' : evaluate
 			},
 			success : function(data) {
 				if(data=='sukses') {
