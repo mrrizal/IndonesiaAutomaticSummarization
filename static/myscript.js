@@ -43,6 +43,39 @@ $(document).ready(function() {
 			data : {'text': $('#text').val(),},
 			success : function(data) {
 			    console.log(data);
+			    if(data['success']!=null) {
+			    	if(data['evaluationMainTopic']!= null) {
+			    		swal({   
+			    			title: "Save to database ?",   
+			    			text: "Main Topic Score : "+data['evaluationMainTopic']+
+				    		"\nTerm Significance Score : "+data['evaluationTermSignificance'],   
+			    			type: "info",   
+			    			showCancelButton: true,   
+			    			confirmButtonColor: "#DD6B55",   
+			    			confirmButtonText: "Save",   
+			    			closeOnConfirm: false }, function(){   
+			    				$.ajax({
+			    					url : '/save_evaluation',
+			    					type : 'POST',
+			    					data : {
+			    						'dtmMethod' : data['dtmMethod'],
+			    						'sentenceSelectionMethod' : data['sentenceSelectionMethod'],
+			    						'aspectRatio' : data['ratio'],
+			    						'evaluationMainTopic' : data['evaluationMainTopic'],
+			    						'evaluationTermSignificance' : data['evaluationTermSignificance']
+			    					},
+			    					success : function(data) {
+			    						if(data=='success') {
+			    							swal("Done", "Save to database", "success");	
+			    						}
+			    					}
+			    				});
+			    		});	
+				    }
+				    else {
+				    	swal("Done", "", "success");	
+				    }	
+			    }
 			    $('#text').val(data['result']);
 			    $('#loader').hide();
        			$('#text').show();
@@ -70,7 +103,15 @@ $(document).ready(function() {
 			},
 			success : function(data) {
 				if(data=='sukses') {
-					swal("Save changes", "", "success");
+					swal({   
+						title: "success save settings !",   
+						type : "success",   
+						timer: 1000,   
+						showConfirmButton: false 
+					}, function() {
+						window.location.reload();	
+					});
+					
 				}
 			}
 		})
@@ -133,7 +174,6 @@ $(document).ready(function() {
                     "</center></td><td><center><button type='button' id='deleteDataAdmin' class='btn btn-danger btn-xs' value="+data[i].id+">Delete</button></center></td></tr>";
                 }
                 $('#adminData').html(result);
-                pagination();
             }
         });
     }
@@ -151,6 +191,7 @@ $(document).ready(function() {
 		});
 	});
 
+	// search by username
 	$('body').on('keyup', '#username', function() {
 		page = $('#currentPage').text();
 		$.ajax({
@@ -169,5 +210,29 @@ $(document).ready(function() {
                 $('#adminData').html(result);
             }
         });
+	});
+
+	// change password admin
+	$('body').on('click', '#changePassword', function() {
+		if($('#newPassword').val().trim()=="") {
+			$('#errMessageChangePassword').text("New Password field blank");
+			$('#successAlertChangePassword').hide();
+			$('#errAlertChangePassword').show();
+		}
+		else {
+			$.ajax({
+				url : '/admin/change_password',
+				type : 'POST',
+				data : { 'newPassword' : $('#newPassword').val() },
+				success : function(data) {
+					if(data['message']=='success') {
+						$('#successMessageChangePassword').text("Password has been changed");
+						$('#errAlertChangePassword').hide();
+						$('#successAlertChangePassword').show();
+					}
+				}
+			});	
+		}
+		return false;
 	});
 });

@@ -58,6 +58,24 @@ def evaluation_data():
 		return render_template('admin_page/evaluation_data.html')
 	return redirect(url_for('login'))
 
+# change password
+@app.route('/admin/change_password', methods = ['GET', 'POST'])
+def change_password():
+	if 'id' in session and 'username' in session and 'superAdmin' in session:
+		if request.is_xhr and request.form is not None:
+			database = models.models.Session()
+			if database.query(Admin).filter(Admin.username==session['username']).count() and request.form['newPassword'].strip() != "":
+				try:
+					m = hashlib.md5()
+					m.update(request.form['newPassword'].encode('utf-8'))
+					database.query(Admin).filter(Admin.username==session['username']).update({'password' : m.hexdigest()})
+					database.commit()
+					return jsonify({'message':'success'})
+				except:
+					return jsonify({'message':'failed'})
+		return render_template('admin_page/change_password.html')
+	return redirect(url_for('admin'))
+
 # page for add admin
 @app.route('/admin/add', methods = ['GET', 'POST'])
 def add_admin():
@@ -194,7 +212,26 @@ def upload():
 				return "tes"
 		else:
 			return "upload failed"
-	return 'request is not ajax'
+	return redirect(url_for('index'))
+
+@app.route('/save_evaluation', methods = ['GET', 'POST'])
+def saveEvaluation():
+	if 'id' in session and 'username' in session and 'superAdmin' in session and request.is_xhr:
+		idAdmin = session['id']
+		dtmMethod = request.form['dtmMethod']
+		sentenceSelectionMethod = request.form['sentenceSelectionMethod']
+		aspectRatio = request.form['aspectRatio']
+		mainTopic = request.form['evaluationMainTopic']
+		termSignificance = request.form['evaluationTermSignificance']
+		# insert data to evaluation table
+		database = models.models.Session()
+		evaluation = Evaluation(idAdmin=idAdmin, dtmMethod=dtmMethod, sentenceSelectionMethod=sentenceSelectionMethod, 
+			aspectRatio=aspectRatio, mainTopic=mainTopic, termSignificance=termSignificance)
+		database.add(evaluation)
+		database.commit()
+		return "success"
+
+	return redirect(url_for('index'))
 
 @app.route('/summarization', methods = ['GET', 'POST'])
 def summarization():
@@ -249,14 +286,7 @@ def summarization():
 				result['dtmMethod'] = tmpdtm
 				result['sentenceSelectionMethod'] = sentenceSelectionMethod
 
-				# insert data to evaluation table
-				database = models.models.Session()
-				evaluation = Evaluation(idAdmin=session['id'], dtmMethod=tmpdtm, sentenceSelectionMethod=sentenceSelectionMethod, 
-					aspectRatio=ratio, mainTopic=evaluationMainTopic, termSignificance=evaluationTermSignificance)
-				database.add(evaluation)
-				database.commit()
-
-
+			result['success'] = True
 			result['result'] = "\n".join(summaryResult)
 			# print(result)
 			return jsonify(result)
