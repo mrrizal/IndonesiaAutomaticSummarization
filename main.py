@@ -8,6 +8,7 @@ from models.models import Admin, Evaluation
 import sqlalchemy
 import hashlib
 import math
+from sqlalchemy import func
 
 app = Flask(__name__)
 app.secret_key = 'rizalGanteng'
@@ -15,6 +16,18 @@ app.secret_key = 'rizalGanteng'
 
 #=========================================FOR EVALUATION======================================
 # index (isinya evaluation gan)
+# index admin page
+@app.route('/admin')
+def admin():
+	if 'id' in session and 'username' in session and 'superAdmin' in session:
+		database = models.models.Session()
+		datas = database.query(Evaluation.dtmMethod, Evaluation.sentenceSelectionMethod, Evaluation.aspectRatio,
+			func.max(Evaluation.mainTopic).label('max_mainTopic'), func.min(Evaluation.mainTopic).label('min_mainTopic'), func.avg(Evaluation.mainTopic) \
+			.label('avg_mainTopic'), func.max(Evaluation.termSignificance).label('max_termSignificance'), func.min(Evaluation.termSignificance) \
+			.label('min_termSignificance'), func.avg(Evaluation.termSignificance).label('avg_termSignificance')) \
+		.group_by(Evaluation.dtmMethod).group_by(Evaluation.sentenceSelectionMethod).group_by(Evaluation.aspectRatio).all()
+		return render_template('admin_page/index.html', datas=datas)
+	return redirect(url_for('login'))
 
 # evaluation page
 @app.route('/admin/evaluation_data')
@@ -87,13 +100,6 @@ def evaluation_delete():
 				except e:
 					pass
 		return "failed"
-	return redirect(url_for('login'))
-
-# index admin page
-@app.route('/admin')
-def admin():
-	if 'id' in session and 'username' in session and 'superAdmin' in session:
-		return render_template('admin_page/index.html')
 	return redirect(url_for('login'))
 
 

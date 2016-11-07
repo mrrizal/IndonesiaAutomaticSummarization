@@ -71,23 +71,34 @@
             <th rowspan="2" style="vertical-align:middle"><center>Document Term Matrix</center></th>
             <th rowspan="2" style="vertical-align:middle"><center>Sentence Selection</center></th>
             <th rowspan="2" style="vertical-align:middle"><center>Aspec Ratio</center></th>
-            <th colspan="2"><center>Average Score</center></th>
+            <th colspan="3"><center>Main Topic</center></th>
+            <th colspan="3"><center>Term Significance</center></th>
         </tr>
         <tr>
-            <th><center>Main Topic</center></th>
-            <th><center>Term Significace</center></th>
+            <th><center>Max</center></th>
+            <th><center>Min</center></th>
+            <th><center>Average</center></th>
+            <th><center>Max</center></th>
+            <th><center>Min</center></th>
+            <th><center>Average</center></th>
         </tr>
         
     </thead>
     <tbody>
+    {% for data in datas  %}
         <tr>
-            <td>1</td>
-            <td>TF</td>
-            <td>Gong & Liu</td>
-            <td><center>10 %</center></td>
-            <td><center>0.88</center></td>
-            <td><center>0.77</center></td>
+            <td>{{ loop.index }}</td>
+            <td>{{ data.dtmMethod }}</td>
+            <td>{{ data.sentenceSelectionMethod }}</td>
+            <td><center>{{ data.aspectRatio }}</center></td>
+            <td>{{ '%0.4f' % data.max_mainTopic | float }}</td>
+            <td>{{ '%0.4f' % data.min_mainTopic | float }}</td>
+            <td>{{ '%0.4f' % data.avg_mainTopic | float }}</td>
+            <td>{{ '%0.4f' % data.max_termSignificance | float }}</td>
+            <td>{{ '%0.4f' % data.min_termSignificance | float }}</td>
+            <td>{{ '%0.4f' % data.avg_termSignificance | float }}</td>
         </tr>
+    {% endfor %}
     </tbody>
 </table>
 </div>
