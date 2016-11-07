@@ -235,22 +235,26 @@ $(document).ready(function() {
 			type : 'POST',
 			data : { 'id':$(this).val() },
 			success : function(data) {
+				getAdminData(page=1, username=$('#username').val());
 				currentPage = parseInt($('#currentPage').text());
 				totalPage = parseInt(data);
 				if(currentPage>totalPage) {
 					currentPage = totalPage;
 				} 
 				$('#pagination').twbsPagination('destroy');
-				$('#pagination').twbsPagination({
-					startPage : currentPage,
-		            totalPages: totalPage,
-		            visiblePages: 5,
-		            onPageClick: function (event, page) {
-		                getAdminData(page);
-		                $('#currentPage').text(page);
-		                // console.log('tes');
-		            }
-		        });
+				if($('#username').val()=="") {
+					$('#pagination').twbsPagination({
+						startPage : currentPage,
+			            totalPages: totalPage,
+			            visiblePages: 5,
+			            onPageClick: function (event, page) {
+			                getAdminData(page=page, username=$('#username').val());
+			                $('#currentPage').text(page);
+			                // console.log('tes');
+			            }
+			        });	
+				}
+				
 			}
 		});
 	});
