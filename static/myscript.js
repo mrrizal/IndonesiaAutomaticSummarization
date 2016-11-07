@@ -1,5 +1,4 @@
 $(document).ready(function() {
-
 	$('body').on('change', '#file', function() {	
 		var form_data = new FormData($('#upload-file')[0]);
 		$('#text').hide();
@@ -91,30 +90,35 @@ $(document).ready(function() {
 		sentenceSelection = $('#sentenceSelection :selected').val();
 		formatFile = $('#formatFile :selected').val();
 		evaluate = $('#evaluate').is(':checked') ? 1 : 0;
-		$.ajax({
-			'url' : '/settings',
-			'type' : 'POST',
-			data : {
-				'ratio' : ratio,
-				'dtm' : dtm,
-				'sentenceSelection' : sentenceSelection,
-				'formatFile' : formatFile,
-				'evaluate' : evaluate
-			},
-			success : function(data) {
-				if(data=='sukses') {
-					swal({   
-						title: "success save settings !",   
-						type : "success",   
-						timer: 1000,   
-						showConfirmButton: false 
-					}, function() {
-						window.location.reload();	
-					});
-					
+		if(ratio!=0 && dtm != 0 && sentenceSelection != 0 && formatFile != 0) {
+			$.ajax({
+				'url' : '/settings',
+				'type' : 'POST',
+				data : {
+					'ratio' : ratio,
+					'dtm' : dtm,
+					'sentenceSelection' : sentenceSelection,
+					'formatFile' : formatFile,
+					'evaluate' : evaluate
+				},
+				success : function(data) {
+					if(data=='sukses') {
+						swal({   
+							title: "success save settings !",   
+							type : "success",   
+							timer: 1000,   
+							showConfirmButton: false 
+						}, function() {
+							window.location.reload();	
+						});
+						
+					}
 				}
-			}
-		})
+			});
+		}
+		else {
+			swal("Failed", "Fill all field !", "error")
+		}
 	});
 
 	// button for add admin
@@ -158,12 +162,12 @@ $(document).ready(function() {
 		return false;
 	});
 
-	function getAdminData() {
-		page = $('#currentPage').text();
+	function getAdminData(page, username) {
+		//page = $('#currentPage').text();
         $.ajax({
             url : '/admin/admindata',
             type : 'POST',
-            data : { 'page': page },
+            data : { 'page': page, 'username' : username },
             success : function(data) {
                 // console.log(data)
                 result = "";
@@ -178,20 +182,48 @@ $(document).ready(function() {
         });
     }
 
-    function getEvaluationData(page=1) {
-    	page = $('#currentPage').text();
+    function getEvaluationData(page, dtmMethod=0, sentenceSelectionMethod=0, aspectRatio=0, getTotalPage=0) {
+    	//page = $('#currentPage').text();
         $.ajax({
             url : '/admin/evaluationdata',
             type : 'POST',
-            data : {'page':page},
+            data : {
+            	'page':page, 
+            	'dtmMethod' : dtmMethod, 
+            	'sentenceSelectionMethod' : sentenceSelectionMethod, 
+            	'aspectRatio' : aspectRatio,
+            	'getTotalPage' : getTotalPage
+            },
             success : function(data) {
-                // console.log(data);
-                result = "";
-                for (var i = 0; i < data.length; i++) {
-                    result += " <tr><td>"+(parseInt(i)+1+((page-1)*10))+"</td><td>"+data[i].admin+"</td><td>"+data[i].dtmMethod+"</td><td>"+data[i].sentenceSelectionMethod+"</td><td><center>"+data[i].aspectRatio+" %</center></td><td>"+
-                    data[i].mainTopic+"</td><td>"+data[i].termSignificance+"</td><td><center><button type='button' class='btn btn-danger btn-xs' id='deleteDataEvaluation' value="+data[i].id+">Delete</button></center></td></tr>"
-                }
-                $('#evaluationData').html(result);
+            	if(getTotalPage!=0) {
+            		currentPage = parseInt($('#currentPage').text());
+            		totalPage = data['totalPage'];
+            		if(currentPage>totalPage) {
+						currentPage = totalPage;
+					} 
+            		$('#pagination').twbsPagination('destroy');
+					$('#pagination').twbsPagination({
+						startPage : currentPage,
+			            totalPages: totalPage,
+			            visiblePages: 5,
+			            onPageClick: function (event, page) {
+			                getFilter2(page);
+			                $('#currentPage').text(page);
+			                // console.log('tes');
+			            }
+			        });
+            		
+            	}
+            	else {
+            		result = "";
+	                for (var i = 1; i < data.length; i++) {
+	                    result += " <tr><td>"+(parseInt(i)+((page-1)*10))+"</td><td>"+data[i].admin+"</td><td>"+data[i].dtmMethod+"</td><td>"+data[i].sentenceSelectionMethod+"</td><td><center>"+data[i].aspectRatio+" %</center></td><td>"+
+	                    data[i].mainTopic+"</td><td>"+data[i].termSignificance+"</td><td><center><button type='button' class='btn btn-danger btn-xs' id='deleteDataEvaluation' value="+data[i].id+">Delete</button></center></td></tr>"
+	                }
+	                $('#evaluationData').html(result);	
+	                $('#currentPage').text(page);
+	            }
+                
             }
         });
     }
@@ -203,8 +235,22 @@ $(document).ready(function() {
 			type : 'POST',
 			data : { 'id':$(this).val() },
 			success : function(data) {
-				// console.log(data);
-				getAdminData();
+				currentPage = parseInt($('#currentPage').text());
+				totalPage = parseInt(data);
+				if(currentPage>totalPage) {
+					currentPage = totalPage;
+				} 
+				$('#pagination').twbsPagination('destroy');
+				$('#pagination').twbsPagination({
+					startPage : currentPage,
+		            totalPages: totalPage,
+		            visiblePages: 5,
+		            onPageClick: function (event, page) {
+		                getAdminData(page);
+		                $('#currentPage').text(page);
+		                // console.log('tes');
+		            }
+		        });
 			}
 		});
 	});
@@ -216,31 +262,53 @@ $(document).ready(function() {
 			type : 'POST',
 			data : { 'id':$(this).val() },
 			success : function(data) {
-				console.log(data);
-				getEvaluationData();
+				// console.log(data);
+				currentPage = parseInt($('#currentPage').text());
+				totalPage = parseInt(data);
+				if(currentPage>totalPage) {
+					currentPage = totalPage;
+				} 
+				$('#pagination').twbsPagination('destroy');
+				$('#pagination').twbsPagination({
+					startPage : currentPage,
+		            totalPages: totalPage,
+		            visiblePages: 5,
+		            onPageClick: function (event, page) {
+		                getFilter(page);
+		                $('#currentPage').text(page);
+		                // console.log('tes');
+		            }
+		        });		
 			}
 		});
 	});
 
 	// search by username
 	$('body').on('keyup', '#username', function() {
-		page = $('#currentPage').text();
-		$.ajax({
-            url : '/admin/admindata',
-            type : 'POST',
-            data : { 'username' : $(this).val() },
-            success : function(data) {
-                // console.log(data)
-                result = "";
-                number = (page-1)*10;
-                number+= 1
-                for (var i = 0; i < data.length; i++) {
-                    result += "<tr><td>"+(number++)+"</td><td>"+data[i].username+"</td><td><center>"+data[i].superAdmin+
-                    "</center></td><td><center><button type='button' id='deleteDataAdmin' class='btn btn-danger btn-xs' value="+data[i].id+">Delete</button></center></td></tr>";
-                }
-                $('#adminData').html(result);
-            }
-        });
+		getAdminData(page=1,username=$(this).val());
+
+		if($(this).val()!="") {
+			$('#pagination').twbsPagination('destroy');	
+		}
+		else {
+			getAdminData(page=1);
+			$.ajax({
+				url : '/admin/admin_data',
+				type : 'POST',
+				success : function(data) {
+					totalPage = data
+					$('#pagination').twbsPagination({
+			            totalPages: totalPage,
+			            visiblePages: 5,
+			            onPageClick: function (event, page) {
+			                getAdminData(page);
+			                $('#currentPage').text(page);
+			                // console.log('tes');
+			            }
+			        });		
+				}
+			});
+		}
 	});
 
 	// change password admin
@@ -264,6 +332,29 @@ $(document).ready(function() {
 				}
 			});	
 		}
+		return false;
+	});
+
+	function getFilter2(page=1) {
+		dtmMethod = $('#dtmMethod :selected').val();
+		sentenceSelectionMethod = $('#sentenceSelectionMethod :selected').val();
+		aspectRatio = $('#aspectRatio :selected').val();
+		getEvaluationData(page=page, dtmMethod=dtmMethod, sentenceSelectionMethod=sentenceSelectionMethod, aspectRatio=aspectRatio);
+			
+	}
+
+	// for filter evaluation
+	function getFilter(page=1) {
+		dtmMethod = $('#dtmMethod :selected').val();
+		sentenceSelectionMethod = $('#sentenceSelectionMethod :selected').val();
+		aspectRatio = $('#aspectRatio :selected').val();
+		getEvaluationData(page=page, dtmMethod=dtmMethod, sentenceSelectionMethod=sentenceSelectionMethod, aspectRatio=aspectRatio);
+		getEvaluationData(page=page, dtmMethod=dtmMethod, sentenceSelectionMethod=sentenceSelectionMethod, aspectRatio=aspectRatio, getTotalPage=1);		
+	}
+
+	// button filter on evaluation data page
+	$('body').on('click', '#filterEvaluationData', function() {
+		getFilter();
 		return false;
 	});
 });

@@ -31,9 +31,30 @@ def getDataEvaluation():
 	if 'id' in session and 'username' in session:
 		session['page'] = request.form['page'] if 'page' in request.form else 1
 		page = session['page']
+		dtmMethod = request.form['dtmMethod'] if request.form['dtmMethod'] != '0' else '%'
+		sentenceSelectionMethod = request.form['sentenceSelectionMethod'] if request.form['sentenceSelectionMethod'] != '0' else '%'
+		aspectRatio = int(request.form['aspectRatio']) if request.form['aspectRatio'] != '0' else 0
+		
 		database = models.models.Session()
-		datas = database.query(Evaluation).limit(10).offset((int(page)-1)*10).all()
-		evaluation = []
+
+		if(aspectRatio==0):
+			totalPage = math.ceil(database.query(Evaluation).filter(Evaluation.dtmMethod.like(dtmMethod)).filter(Evaluation.sentenceSelectionMethod.like(sentenceSelectionMethod)).count()/10)
+
+			if 'getTotalPage' in request.form and request.form['getTotalPage'] != '0':
+				return jsonify({'totalPage':totalPage})
+
+			datas = database.query(Evaluation).filter(Evaluation.dtmMethod.like(dtmMethod)).filter(Evaluation.sentenceSelectionMethod.like(sentenceSelectionMethod)).limit(10).offset((int(page)-1)*10).all()
+		else:
+			totalPage = math.ceil(database.query(Evaluation).filter(Evaluation.dtmMethod.like(dtmMethod)).filter(Evaluation.sentenceSelectionMethod.like(sentenceSelectionMethod)). \
+			filter(Evaluation.aspectRatio==aspectRatio).count()/10)
+
+			if 'getTotalPage' in request.form and request.form['getTotalPage'] != '0':
+				return jsonify({'totalPage':totalPage})
+
+			datas = database.query(Evaluation).filter(Evaluation.dtmMethod.like(dtmMethod)).filter(Evaluation.sentenceSelectionMethod.like(sentenceSelectionMethod)). \
+			filter(Evaluation.aspectRatio==aspectRatio).limit(10).offset((int(page)-1)*10).all()
+			
+		evaluation = [{'totalPage' : totalPage }]
 		for data in datas:
 			tmp = {}
 			tmp['id'] = data.id
@@ -62,7 +83,7 @@ def evaluation_delete():
 				try:
 					database.query(Evaluation).filter(Evaluation.id==id).delete(synchronize_session=False)
 					database.commit()
-					return "success"
+					return str(math.ceil(database.query(Evaluation).count()/10))
 				except e:
 					pass
 		return "failed"
@@ -164,7 +185,7 @@ def getAdminData():
 		database = models.models.Session()
 		page = session['page']
 		
-		if 'username' in request.form:
+		if 'username' in request.form and request.form['username'].strip() != "":
 			datas = database.query(Admin).filter(Admin.username.like('%'+request.form['username']+'%')).all()
 		else:
 			datas = database.query(Admin).limit(10).offset((int(page)-1)*10).all()
@@ -189,6 +210,9 @@ def admin_data():
 		
 		database = models.models.Session()
 		totalPage = math.ceil(database.query(Admin).count()/10)
+		if request.is_xhr:
+			return str(totalPage)
+
 		return render_template('admin_page/admin_data.html', totalPage=totalPage)
 	return redirect(url_for('login'))
 
@@ -206,13 +230,14 @@ def admin_delete():
 				try:
 					database.query(Admin).filter(Admin.id==id).delete(synchronize_session=False)
 					database.commit()
-					return "success"
+					return str(math.ceil(database.query(Admin).count()/10))
 				except e:
 					pass
 		return "failed"
 	return redirect(url_for('login'))
 
 #==============================================SUMMARIZATION/FRONT-END=====================================
+
 @app.route('/')
 def index():
 	return render_template('index.html')

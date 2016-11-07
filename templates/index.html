@@ -59,6 +59,7 @@
 		                   	<label for="ratio">Aspect Ratio in %</label>
 		                   	<br>
 		                   	<select id="ratio" class="form-control">
+		                   		<option value="0"></option>
 		                   		<option value="10" {% if session['ratio'] == 10 %} selected {% endif %}>10 %</option>
 		                   		<option value="20" {% if session['ratio'] == 20 %} selected {% endif %}>20 %</option>
 		                   		<option value="30" {% if session['ratio'] == 30 %} selected {% endif %}>30 %</option>
@@ -75,6 +76,7 @@
 	                  	<div class="form-group">
 		                    <label for="dtmMethod">Document Term Matrix Method</label>
 		                    <select class="form-control" id="dtm">
+		                    	<option value="0"></option>
 		                    	<option value="tfidf" {% if session['dtm'] == 'tfidf' %} selected {% endif %}>Term Frequency Inverse Document Frequency (TFIDF)</option>
 		                    	<option value="tf" {% if session['dtm'] == 'tf' %} selected {% endif %}>Term Frequency (TF)</option>
 		                    	<option value="boolean" {% if session['dtm'] == 'boolean' %} selected {% endif %}>Boolean</option>
@@ -83,6 +85,7 @@
 	                  	<div class="form-group">
 		                    <label for="sentenceSelection">Sentence Selection Method</label>
 		                    <select class="form-control" id="sentenceSelection">
+		                    	<option value="0"></option>
 		                    	<option value="GongLiu" {% if session['sentenceSelection'] == 'GongLiu' %} selected {% endif %}>Gong & Liu</option>
 		                    	<option value="SteinbergerJezek" {% if session['sentenceSelection'] == 'SteinbergerJezek' %} selected {% endif %}>Steinberger & Jezek 1</option>
 		                    	<option value="SteinbergerJezek2" {% if session['sentenceSelection'] == 'SteinbergerJezek2' %} selected {% endif %}>Steinberger & Jezek 2</option>
@@ -92,6 +95,7 @@
                       	<div class="form-group">
 	                        <label for="saveAs">Save As</label>
 	                        <select class="form-control" id="formatFile">
+	                        	<option value="0"></option>
 	                            <option value="plainText" {% if session['formatFile'] == 'plainText' %} selected {% endif %}>Plain Text (txt)</option>
 	                            <option value="pdf" {% if session['formatFile'] == 'pdf' %} selected {% endif %}>PDF</option>
 	                        </select>

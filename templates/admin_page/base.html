@@ -166,17 +166,31 @@
                 }
             });
         }
+        
+        function getFilter(page=1) {
+            dtmMethod = $('#dtmMethod :selected').val();
+            sentenceSelectionMethod = $('#sentenceSelectionMethod :selected').val();
+            aspectRatio = $('#aspectRatio :selected').val();
+            getEvaluationData(page=page, dtmMethod=dtmMethod, sentenceSelectionMethod=sentenceSelectionMethod, aspectRatio=aspectRatio);
+            getEvaluationData(page=page, dtmMethod=dtmMethod, sentenceSelectionMethod=sentenceSelectionMethod, aspectRatio=aspectRatio, getTotalPage=1);
+        }
 
-        function getEvaluationData(page=1) {
+        function getEvaluationData(page=1, dtmMethod=0, sentenceSelectionMethod=0, aspectRatio=0) {
             $.ajax({
                 url : '/admin/evaluationdata',
                 type : 'POST',
-                data : {'page':page},
+                data : {
+                    'page':page, 
+                    'dtmMethod' : dtmMethod, 
+                    'sentenceSelectionMethod' : sentenceSelectionMethod, 
+                    'aspectRatio' : aspectRatio,
+                    'getTotalPage' : 0
+                },
                 success : function(data) {
                     console.log(data);
                     result = "";
-                    for (var i = 0; i < data.length; i++) {
-                        result += " <tr><td>"+(parseInt(i)+1+((page-1)*10))+"</td><td>"+data[i].admin+"</td><td>"+data[i].dtmMethod+"</td><td>"+data[i].sentenceSelectionMethod+"</td><td><center>"+data[i].aspectRatio+" %</center></td><td>"+data[i].mainTopic+"</td><td>"+data[i].termSignificance+"</td><td><center><button type='button' class='btn btn-danger btn-xs' id='deleteDataEvaluation' value="+data[i].id+">Delete</button></center></td></tr>"
+                    for (var i = 1; i < data.length; i++) {
+                        result += " <tr><td>"+(parseInt(i)+((page-1)*10))+"</td><td>"+data[i].admin+"</td><td>"+data[i].dtmMethod+"</td><td>"+data[i].sentenceSelectionMethod+"</td><td><center>"+data[i].aspectRatio+" %</center></td><td>"+data[i].mainTopic+"</td><td>"+data[i].termSignificance+"</td><td><center><button type='button' class='btn btn-danger btn-xs' id='deleteDataEvaluation' value="+data[i].id+">Delete</button></center></td></tr>"
                     }
                     $('#evaluationData').html(result);
                     $('#currentPage').text(page);
