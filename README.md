@@ -1,3 +1,6 @@
 # IndonesiaAutomaticSummarization
-Indonesia Automatic Summarization<br>
-test
+Indonesia Automatic Summarization
+Feature :
+<ul>
+  <li>Have 3 different method for create Document term Matrix</li>
+</ul>
