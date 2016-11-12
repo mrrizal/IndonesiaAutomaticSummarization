@@ -361,4 +361,80 @@ $(document).ready(function() {
 		getFilter();
 		return false;
 	});
+
+	function getEvaluationResult(page, dtmMethod=0, sentenceSelectionMethod=0, aspectRatio=0, getTotalPage=0) {
+    	//page = $('#currentPage').text();
+        $.ajax({
+            url : '/admin/evaluationResult',
+            type : 'POST',
+            data : {
+            	'page':page, 
+            	'dtmMethod' : dtmMethod, 
+            	'sentenceSelectionMethod' : sentenceSelectionMethod, 
+            	'aspectRatio' : aspectRatio,
+            	'getTotalPage' : getTotalPage
+            },
+            success : function(data) {
+            	if(getTotalPage!=0) {
+            		currentPage = parseInt($('#currentPage').text());
+            		totalPage = data['totalPage'];
+            		if(currentPage>totalPage) {
+						currentPage = totalPage;
+					} 
+            		$('#pagination').twbsPagination('destroy');
+					$('#pagination').twbsPagination({
+						startPage : currentPage,
+			            totalPages: totalPage,
+			            visiblePages: 5,
+			            onPageClick: function (event, page) {
+			                getFilterEvaluationResult2(page);
+			                $('#currentPage').text(page);
+			                // console.log('tes');
+			            }
+			        });
+            		
+            	}
+            	else {
+            		result = "";
+                    for (var i = 1; i < data.length; i++) {
+                        result += " <tr><td>"+(parseInt(i)+((page-1)*10))+"</td><td>"+data[i].dtmMethod+"</td><td>"+
+                        data[i].sentenceSelectionMethod+"</td><td>"+data[i].aspectRatio+
+                        "</td><td><center>"+parseFloat(data[i].max_mainTopic).toFixed(4)+
+                        " %</center></td><td><center>"+parseFloat(data[i].min_mainTopic).toFixed(4)+
+                        " %</center></td><td><center>"+parseFloat(data[i].avg_mainTopic).toFixed(4)+
+                        " %</center></td><td><center>"+parseFloat(data[i].max_termSignificance).toFixed(4)+
+                        " %</center></td><td><center>"+parseFloat(data[i].min_termSignificance).toFixed(4)+
+                        " %</center></td><td><center>"+parseFloat(data[i].avg_termSignificance).toFixed(4)+
+                        " %</center></td></tr>"
+                    }
+                    $('#evaluationResult').html(result);
+                    $('#currentPage').text(page);
+	            }
+                
+            }
+        });
+    }
+
+    function getFilterEvaluationResult2(page=1) {
+		dtmMethod = $('#dtmMethod :selected').val();
+		sentenceSelectionMethod = $('#sentenceSelectionMethod :selected').val();
+		aspectRatio = $('#aspectRatio :selected').val();
+		getEvaluationResult(page=page, dtmMethod=dtmMethod, sentenceSelectionMethod=sentenceSelectionMethod, aspectRatio=aspectRatio);
+			
+	}
+
+	// for filter evaluation
+	function getFilterEvaluationResult(page=1) {
+		dtmMethod = $('#dtmMethod :selected').val();
+		sentenceSelectionMethod = $('#sentenceSelectionMethod :selected').val();
+		aspectRatio = $('#aspectRatio :selected').val();
+		getEvaluationResult(page=page, dtmMethod=dtmMethod, sentenceSelectionMethod=sentenceSelectionMethod, aspectRatio=aspectRatio);
+		getEvaluationResult(page=page, dtmMethod=dtmMethod, sentenceSelectionMethod=sentenceSelectionMethod, aspectRatio=aspectRatio, getTotalPage=1);		
+	}
+
+	// button filter on evaluation result page
+	$('body').on('click', '#filterEvaluationResult', function() {
+		getFilterEvaluationResult();
+		return false;
+	});
 });

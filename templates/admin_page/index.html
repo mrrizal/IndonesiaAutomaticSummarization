@@ -25,41 +25,41 @@
         <td>Filter :</td>
         <td>&nbsp</td>
         <td>
-            <select class="form-control input-sm">
-                <option>DTM Method</option>
-                <option>TF</option>
-                <option>TF-IDF</option>
-                <option>Boolean</option>
+            <select class="form-control input-sm" id="dtmMethod">
+                <option value="0">DTM Method</option>
+                <option value="tf">TF</option>
+                <option value="tfidf">TF-IDF</option>
+                <option value="boolean">Boolean</option>
             </select>
         </td>
         <td>&nbsp</td>
         <td>
-            <select class="form-control input-sm">
-                <option>Sentence Selection Method</option>
-                <option>Gong & Liu</option>
-                <option>Steinberger & Jezek</option>
-                <option>Steinberger & Jezek 2</option>
-                <option>Cross</option>
+            <select class="form-control input-sm" id="sentenceSelectionMethod">
+                <option value="0">Sentence Selection Method</option>
+                <option value="GongLiu">Gong & Liu</option>
+                <option value="SteinbergerJezek">Steinberger & Jezek</option>
+                <option value="SteinbergerJezek2">Steinberger & Jezek 2</option>
+                <option value="cross">Cross</option>
             </select>
         </td>
         <td>&nbsp</td>
         <td>
-            <select class="form-control input-sm">
-                <option>Aspect Ratio</option>
-                <option>10 %</option>
-                <option>20 %</option>
-                <option>30 %</option>
-                <option>40 %</option>
-                <option>50 %</option>
-                <option>60 %</option>
-                <option>70 %</option>
-                <option>80 %</option>
-                <option>90 %</option>
+            <select class="form-control input-sm" id="aspectRatio">
+                <option value="0">Aspect Ratio</option>
+                <option value="10">10 %</option>
+                <option value="20">20 %</option>
+                <option value="30">30 %</option>
+                <option value="40">40 %</option>
+                <option value="50">50 %</option>
+                <option value="60">60 %</option>
+                <option value="70">70 %</option>
+                <option value="80">80 %</option>
+                <option value="90">90 %</option>
             </select>
         </td>
         <td>&nbsp</td>
         <td>
-            <button type="button" class="btn btn-primary btn-sm">Filter</button>
+            <button type="button" class="btn btn-primary btn-sm" id="filterEvaluationResult">Filter</button>
         </td>
     </tr>
 </table>
@@ -84,23 +84,14 @@
         </tr>
         
     </thead>
-    <tbody>
-    {% for data in datas  %}
-        <tr>
-            <td>{{ loop.index }}</td>
-            <td>{{ data.dtmMethod }}</td>
-            <td>{{ data.sentenceSelectionMethod }}</td>
-            <td><center>{{ data.aspectRatio }}</center></td>
-            <td>{{ '%0.4f' % data.max_mainTopic | float }}</td>
-            <td>{{ '%0.4f' % data.min_mainTopic | float }}</td>
-            <td>{{ '%0.4f' % data.avg_mainTopic | float }}</td>
-            <td>{{ '%0.4f' % data.max_termSignificance | float }}</td>
-            <td>{{ '%0.4f' % data.min_termSignificance | float }}</td>
-            <td>{{ '%0.4f' % data.avg_termSignificance | float }}</td>
-        </tr>
-    {% endfor %}
+    <tbody id="evaluationResult">
     </tbody>
 </table>
+<nav aria-label="Page navigation">
+    <ul class="pagination" id="pagination"></ul>
+</nav>
 </div>
+<div hidden="true" id="currentPage"></div>
 {% endblock content %}
-<!-- Page Heading -->
+{% block page %}{{ totalPage }}{% endblock page %}
+{% block callFunction %}getFilterEvaluationResult(page);{% endblock callFunction %}

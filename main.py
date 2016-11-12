@@ -21,13 +21,79 @@ app.secret_key = 'rizalGanteng'
 def admin():
 	if 'id' in session and 'username' in session and 'superAdmin' in session:
 		database = models.models.Session()
-		datas = database.query(Evaluation.dtmMethod, Evaluation.sentenceSelectionMethod, Evaluation.aspectRatio,
+		totalPage = math.ceil(database.query(Evaluation.dtmMethod, Evaluation.sentenceSelectionMethod, Evaluation.aspectRatio,
+		func.max(Evaluation.mainTopic).label('max_mainTopic'), func.min(Evaluation.mainTopic).label('min_mainTopic'), func.avg(Evaluation.mainTopic) \
+		.label('avg_mainTopic'), func.max(Evaluation.termSignificance).label('max_termSignificance'), func.min(Evaluation.termSignificance) \
+		.label('min_termSignificance'), func.avg(Evaluation.termSignificance).label('avg_termSignificance')) \
+		.group_by(Evaluation.dtmMethod).group_by(Evaluation.sentenceSelectionMethod).group_by(Evaluation.aspectRatio).count()/10)
+		
+		return render_template('admin_page/index.html', totalPage=totalPage)
+	return redirect(url_for('login'))
+
+@app.route('/admin/evaluationResult', methods=['GET', 'POST'])
+def getEvaluationResult():
+	if 'id' in session and 'username' in session:
+		#session['page'] = request.form['page'] if 'page' in request.form else 1
+		#page = session['page']
+		page = request.form['page'] if 'page' in request.form else 1
+		dtmMethod = request.form['dtmMethod'] if request.form['dtmMethod'] != '0' else '%'
+		sentenceSelectionMethod = request.form['sentenceSelectionMethod'] if request.form['sentenceSelectionMethod'] != '0' else '%'
+		aspectRatio = int(request.form['aspectRatio']) if request.form['aspectRatio'] != '0' else 0
+		
+		database = models.models.Session()
+
+		if(aspectRatio==0):
+			totalPage = math.ceil(database.query(Evaluation.dtmMethod, Evaluation.sentenceSelectionMethod, Evaluation.aspectRatio,
 			func.max(Evaluation.mainTopic).label('max_mainTopic'), func.min(Evaluation.mainTopic).label('min_mainTopic'), func.avg(Evaluation.mainTopic) \
 			.label('avg_mainTopic'), func.max(Evaluation.termSignificance).label('max_termSignificance'), func.min(Evaluation.termSignificance) \
 			.label('min_termSignificance'), func.avg(Evaluation.termSignificance).label('avg_termSignificance')) \
-		.group_by(Evaluation.dtmMethod).group_by(Evaluation.sentenceSelectionMethod).group_by(Evaluation.aspectRatio).all()
-		return render_template('admin_page/index.html', datas=datas)
-	return redirect(url_for('login'))
+			.group_by(Evaluation.dtmMethod).group_by(Evaluation.sentenceSelectionMethod).group_by(Evaluation.aspectRatio).filter(Evaluation.dtmMethod.like(dtmMethod)).filter(Evaluation.sentenceSelectionMethod.like(sentenceSelectionMethod)).count()/10)
+
+			if 'getTotalPage' in request.form and request.form['getTotalPage'] != '0':
+				return jsonify({'totalPage':totalPage})
+
+			datas = database.query(Evaluation.dtmMethod, Evaluation.sentenceSelectionMethod, Evaluation.aspectRatio,
+			func.max(Evaluation.mainTopic).label('max_mainTopic'), func.min(Evaluation.mainTopic).label('min_mainTopic'), func.avg(Evaluation.mainTopic) \
+			.label('avg_mainTopic'), func.max(Evaluation.termSignificance).label('max_termSignificance'), func.min(Evaluation.termSignificance) \
+			.label('min_termSignificance'), func.avg(Evaluation.termSignificance).label('avg_termSignificance')) \
+			.group_by(Evaluation.dtmMethod).group_by(Evaluation.sentenceSelectionMethod).group_by(Evaluation.aspectRatio).filter(Evaluation.dtmMethod.like(dtmMethod)).filter(Evaluation.sentenceSelectionMethod.like(sentenceSelectionMethod)).limit(10).offset((int(page)-1)*10).all()
+		
+		else:
+			totalPage = math.ceil(database.query(Evaluation.dtmMethod, Evaluation.sentenceSelectionMethod, Evaluation.aspectRatio,
+			func.max(Evaluation.mainTopic).label('max_mainTopic'), func.min(Evaluation.mainTopic).label('min_mainTopic'), func.avg(Evaluation.mainTopic) \
+			.label('avg_mainTopic'), func.max(Evaluation.termSignificance).label('max_termSignificance'), func.min(Evaluation.termSignificance) \
+			.label('min_termSignificance'), func.avg(Evaluation.termSignificance).label('avg_termSignificance')) \
+			.group_by(Evaluation.dtmMethod).group_by(Evaluation.sentenceSelectionMethod).group_by(Evaluation.aspectRatio).filter(Evaluation.dtmMethod.like(dtmMethod)).filter(Evaluation.sentenceSelectionMethod.like(sentenceSelectionMethod)). \
+			filter(Evaluation.aspectRatio==aspectRatio).count()/10)
+
+			if 'getTotalPage' in request.form and request.form['getTotalPage'] != '0':
+				return jsonify({'totalPage':totalPage})
+
+			datas = database.query(Evaluation.dtmMethod, Evaluation.sentenceSelectionMethod, Evaluation.aspectRatio,
+			func.max(Evaluation.mainTopic).label('max_mainTopic'), func.min(Evaluation.mainTopic).label('min_mainTopic'), func.avg(Evaluation.mainTopic) \
+			.label('avg_mainTopic'), func.max(Evaluation.termSignificance).label('max_termSignificance'), func.min(Evaluation.termSignificance) \
+			.label('min_termSignificance'), func.avg(Evaluation.termSignificance).label('avg_termSignificance')) \
+			.group_by(Evaluation.dtmMethod).group_by(Evaluation.sentenceSelectionMethod).group_by(Evaluation.aspectRatio).filter(Evaluation.dtmMethod.like(dtmMethod)).filter(Evaluation.sentenceSelectionMethod.like(sentenceSelectionMethod)). \
+			filter(Evaluation.aspectRatio==aspectRatio).limit(10).offset((int(page)-1)*10).all()
+			
+		evaluation = [{'totalPage' : totalPage }]
+		for data in datas:
+			tmp = {}
+			tmp['dtmMethod'] = data.dtmMethod
+			tmp['sentenceSelectionMethod'] = data.sentenceSelectionMethod
+			tmp['aspectRatio'] = data.aspectRatio
+			tmp['min_mainTopic'] = data.min_mainTopic
+			tmp['max_mainTopic'] = data.max_mainTopic
+			tmp['avg_mainTopic'] = data.avg_mainTopic
+			tmp['min_termSignificance'] = data.min_termSignificance
+			tmp['max_termSignificance'] = data.max_termSignificance
+			tmp['avg_termSignificance'] = data.avg_termSignificance
+			evaluation.append(tmp)
+
+		return jsonify(evaluation)
+
+	return 'hello world'
+
 
 # evaluation page
 @app.route('/admin/evaluation_data')
@@ -42,8 +108,9 @@ def evaluation_data():
 @app.route('/admin/evaluationdata', methods=['GET', 'POST'])
 def getDataEvaluation():
 	if 'id' in session and 'username' in session:
-		session['page'] = request.form['page'] if 'page' in request.form else 1
-		page = session['page']
+		#session['page'] = request.form['page'] if 'page' in request.form else 1
+		#page = session['page']
+		page = request.form['page'] if 'page' in request.form else 1
 		dtmMethod = request.form['dtmMethod'] if request.form['dtmMethod'] != '0' else '%'
 		sentenceSelectionMethod = request.form['sentenceSelectionMethod'] if request.form['sentenceSelectionMethod'] != '0' else '%'
 		aspectRatio = int(request.form['aspectRatio']) if request.form['aspectRatio'] != '0' else 0
@@ -187,9 +254,9 @@ def getAdminData():
 		if session['superAdmin'] != True:
 			return redirect(url_for('admin'))
 		
-		session['page'] = request.form['page'] if 'page' in request.form else 1
+		#session['page'] = request.form['page'] if 'page' in request.form else 1
 		database = models.models.Session()
-		page = session['page']
+		page = request.form['page'] if 'page' in request.form else 1
 		
 		if 'username' in request.form and request.form['username'].strip() != "":
 			datas = database.query(Admin).filter(Admin.username.like('%'+request.form['username']+'%')).all()
