@@ -1,2 +1,2 @@
 # IndonesiaAutomaticSummarization
-Indonesia Automatic Summarization
+Indonesian Automatic Summarization
