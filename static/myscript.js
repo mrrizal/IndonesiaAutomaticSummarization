@@ -437,4 +437,45 @@ $(document).ready(function() {
 		getFilterEvaluationResult();
 		return false;
 	});
+
+	// save summarization result
+	$('body').on('click', '#saveResult', function() {
+		if($('#text').val().trim()!="") {
+			swal({   
+				title: "Input File Name!",   
+				type: "input",   
+				showCancelButton: true,   
+				closeOnConfirm: false,   
+				animation: "slide-from-top",   
+				inputPlaceholder: "Write something" 
+			}, 
+			function(inputValue){   
+				if (inputValue === false) 
+					return false;      
+				if (inputValue === "") {     
+					swal.showInputError("You need to write something!");     
+					return false   
+				}      
+				swal("Done!","","success"); 
+				formatFile = $('#formatFileValue').text();
+				if (formatFile=="pdf") {
+					data = $('#text').val().replace(/\r\n|\r|\n/g,"<br />");
+					$.ajax({
+						url : '/saveResult',
+						type : 'POST',
+						data : { 'result' : data, 'fileName' : inputValue+".pdf" },
+						success : function(data) {
+							console.log(data);
+							window.location.href = '/getPDF/'+inputValue+".pdf";
+						}
+					});	
+				}
+				else {
+					data = $('#text').val();
+					var blob = new Blob([data], {type: "text/plain;charset=utf-8"});
+					saveAs(blob, inputValue+".txt");
+				}
+			});	
+		}	
+	});
 });

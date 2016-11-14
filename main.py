@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify, session, redirect, url_for
+from flask import Flask, render_template, request, jsonify, session, redirect, url_for, send_file, after_this_request
 from werkzeug import secure_filename
 from models.Summarization import Summarization
 from models.Converter import Converter
@@ -9,6 +9,8 @@ import sqlalchemy
 import hashlib
 import math
 from sqlalchemy import func
+import pdfkit
+import os
 
 app = Flask(__name__)
 app.secret_key = 'rizalGanteng'
@@ -359,7 +361,7 @@ def upload():
 					return result
 				return "Convert to plain text failed"
 			else:
-				return "tes"
+				return "upload failed"
 		else:
 			return "upload failed"
 	return redirect(url_for('index'))
@@ -382,6 +384,37 @@ def saveEvaluation():
 		return "success"
 
 	return redirect(url_for('index'))
+
+@app.route('/saveResult', methods = ['GET', 'POST'])
+def saveResult():
+	if request.is_xhr:
+		# print(request.form['result'])
+		pdfkit.from_string(request.form['result'], request.form['fileName'])
+		# pdf = open("out.pdf")
+		# response = make_response(unicode(pdf.read(), errors='ignore'))
+		# response.headers['Content-Disposition'] = "attachment; filename='out.pdf"
+		# response.mimetype = 'application/pdf'
+		# pdf.close()
+		# response = send_file("out.pdf", as_attachment=True)
+		return "success"
+	return redirect(url_for('index'))
+
+file = ""
+@app.route('/getPDF/<fileName>', methods = ['GET', 'POST'])
+def getPDF(fileName):
+	@after_this_request
+	def deletePDF(response):
+		try:
+			os.remove(file)
+		except:
+			pass
+		return response
+	try:
+		response = send_file(fileName, as_attachment=True)
+		file = fileName
+		return response
+	except:
+		return redirect(url_for('index')) 
 
 @app.route('/summarization', methods = ['GET', 'POST'])
 def summarization():
