@@ -93,5 +93,11 @@
 </div>
 <div hidden="true" id="currentPage"></div>
 {% endblock content %}
-{% block page %}{{ totalPage }}{% endblock page %}
+{% block page %}
+{% if totalPage==0 %}
+    1
+{% else %}
+    {{ totalPage }}
+{% endif %}
+{% endblock page %}
 {% block callFunction %}getFilterEvaluationResult(page);{% endblock callFunction %}

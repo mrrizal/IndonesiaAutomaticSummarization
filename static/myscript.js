@@ -198,6 +198,9 @@ $(document).ready(function() {
             	if(getTotalPage!=0) {
             		currentPage = parseInt($('#currentPage').text());
             		totalPage = data['totalPage'];
+            		if(totalPage==0) {
+            			totalPage=1;
+            		}
             		if(currentPage>totalPage) {
 						currentPage = totalPage;
 					} 
@@ -269,6 +272,9 @@ $(document).ready(function() {
 				// console.log(data);
 				currentPage = parseInt($('#currentPage').text());
 				totalPage = parseInt(data);
+				if(totalPage==0) {
+					totalPage=1;
+				}
 				if(currentPage>totalPage) {
 					currentPage = totalPage;
 				} 
@@ -378,6 +384,9 @@ $(document).ready(function() {
             	if(getTotalPage!=0) {
             		currentPage = parseInt($('#currentPage').text());
             		totalPage = data['totalPage'];
+            		if(totalPage==0) {
+            			totalPage=1;
+            		}
             		if(currentPage>totalPage) {
 						currentPage = totalPage;
 					} 
@@ -456,7 +465,6 @@ $(document).ready(function() {
 					swal.showInputError("You need to write something!");     
 					return false   
 				}      
-				swal("Done!","","success"); 
 				formatFile = $('#formatFileValue').text();
 				if (formatFile=="pdf") {
 					data = $('#text').val().replace(/\r\n|\r|\n/g,"<br />");
@@ -475,6 +483,7 @@ $(document).ready(function() {
 					var blob = new Blob([data], {type: "text/plain;charset=utf-8"});
 					saveAs(blob, inputValue+".txt");
 				}
+				swal("Done!","","success"); 
 			});	
 		}	
 	});
