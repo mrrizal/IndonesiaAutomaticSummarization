@@ -161,7 +161,8 @@ class Summarization(object):
 		evaluation = []
 		for i in range(len(ue)):
 			try:
-				evaluation.append(abs(ue[i]*uf[i]))
+				# evaluation.append(abs(ue[i]*uf[i]))
+				evaluation.append(ue[i]*uf[i])
 			except IndexError:
 				evaluation.append(0)
 
@@ -172,7 +173,8 @@ class Summarization(object):
 		result = []
 		for i in range(len(u)):
 			try:
-				result.append(sqrt(sum((j*k)**2 for j, k in zip(absolute(u[i]), absolute(sigma)))))
+				# result.append(sqrt(sum((j*k)**2 for j, k in zip(absolute(u[i]), absolute(sigma)))))
+				result.append(sqrt(sum((j*k)**2 for j, k in zip(u[i], sigma))))
 			except:
 				result.append(0)
 		return result

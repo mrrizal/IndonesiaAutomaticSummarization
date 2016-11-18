@@ -111,8 +111,8 @@
 			                    	<option value="tf" {% if session['dtm'] == 'tf' %} selected {% endif %}>Term Frequency (TF)</option>
 			                    	<option value="boolean" {% if session['dtm'] == 'boolean' %} selected {% endif %}>Boolean</option>	
 		                    	{% else %}
-		                    		<option value="tfidf">Term Frequency Inverse Document Frequency (TFIDF)</option>
-			                    	<option value="tf" selected="selected">Term Frequency (TF)</option>
+		                    		<option value="tfidf" selected="selected">Term Frequency Inverse Document Frequency (TFIDF)</option>
+			                    	<option value="tf">Term Frequency (TF)</option>
 			                    	<option value="boolean">Boolean</option>
 		                    	{% endif %}
 		                    </select>

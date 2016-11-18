@@ -456,12 +456,14 @@ def summarization():
 				uSummary, sigmaSummary, vtSummary = summary.getSVD(dtmSummary, summaryResult)
 				uf = [i[0] for i in u]
 				ue = [i[0] for i in uSummary]
-				evaluationMainTopic = summary.getEvaluationMainTopic(sorted(absolute(uf)), sorted(absolute(ue)))
+				# evaluationMainTopic = summary.getEvaluationMainTopic(sorted(absolute(uf)), sorted(absolute(ue)))
+				evaluationMainTopic = summary.getEvaluationMainTopic(sorted(uf), sorted(ue))
 
 				# evaluation term significace
 				uf = summary.getTermVector(u, sigma)
 				ue = summary.getTermVector(uSummary, sigmaSummary)
-				evaluationTermSignificance = summary.getEvaluationMainTopic(sorted(absolute(uf)), sorted(absolute(ue)))
+				# evaluationTermSignificance = summary.getEvaluationMainTopic(sorted(absolute(uf)), sorted(absolute(ue)))
+				evaluationTermSignificance = summary.getEvaluationMainTopic(sorted(uf), sorted(ue))
 
 				result['evaluationMainTopic'] = evaluationMainTopic
 				result['evaluationTermSignificance'] = evaluationTermSignificance
@@ -474,7 +476,7 @@ def summarization():
 			# print(result)
 			return jsonify(result)
 		except:
-			return jsonify({'result':'Sorry something wrong ...'})
+			return jsonify({'result':'Evaluation Failed, Please change the aspect ratio ...'})
 	return "request is not ajax"
 	
 if __name__ == "__main__":

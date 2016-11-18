@@ -409,12 +409,12 @@ $(document).ready(function() {
                         result += " <tr><td>"+(parseInt(i)+((page-1)*10))+"</td><td>"+data[i].dtmMethod+"</td><td>"+
                         data[i].sentenceSelectionMethod+"</td><td>"+data[i].aspectRatio+
                         "</td><td><center>"+parseFloat(data[i].max_mainTopic).toFixed(4)+
-                        " %</center></td><td><center>"+parseFloat(data[i].min_mainTopic).toFixed(4)+
-                        " %</center></td><td><center>"+parseFloat(data[i].avg_mainTopic).toFixed(4)+
-                        " %</center></td><td><center>"+parseFloat(data[i].max_termSignificance).toFixed(4)+
-                        " %</center></td><td><center>"+parseFloat(data[i].min_termSignificance).toFixed(4)+
-                        " %</center></td><td><center>"+parseFloat(data[i].avg_termSignificance).toFixed(4)+
-                        " %</center></td></tr>"
+                        " </center></td><td><center>"+parseFloat(data[i].min_mainTopic).toFixed(4)+
+                        " </center></td><td><center>"+parseFloat(data[i].avg_mainTopic).toFixed(4)+
+                        " </center></td><td><center>"+parseFloat(data[i].max_termSignificance).toFixed(4)+
+                        " </center></td><td><center>"+parseFloat(data[i].min_termSignificance).toFixed(4)+
+                        " </center></td><td><center>"+parseFloat(data[i].avg_termSignificance).toFixed(4)+
+                        " </center></td></tr>"
                     }
                     $('#evaluationResult').html(result);
                     $('#currentPage').text(page);
