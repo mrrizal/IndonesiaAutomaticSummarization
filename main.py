@@ -463,7 +463,7 @@ def summarization():
 				uf = summary.getTermVector(u, sigma)
 				ue = summary.getTermVector(uSummary, sigmaSummary)
 				# evaluationTermSignificance = summary.getEvaluationMainTopic(sorted(absolute(uf)), sorted(absolute(ue)))
-				evaluationTermSignificance = summary.getEvaluationMainTopic(sorted(uf), sorted(ue))
+				evaluationTermSignificance = summary.getEvaluationMainTopic(uf, ue)
 
 				result['evaluationMainTopic'] = evaluationMainTopic
 				result['evaluationTermSignificance'] = evaluationTermSignificance

@@ -174,7 +174,7 @@ class Summarization(object):
 		for i in range(len(u)):
 			try:
 				# result.append(sqrt(sum((j*k)**2 for j, k in zip(absolute(u[i]), absolute(sigma)))))
-				result.append(sqrt(sum((j*k)**2 for j, k in zip(u[i], sigma))))
+				result.append(sqrt(sum((j*k)**2 for j, k in zip(sorted(u[i]), sorted(sigma)))))
 			except:
 				result.append(0)
 		return result
