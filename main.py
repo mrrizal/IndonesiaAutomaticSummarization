@@ -58,7 +58,9 @@ def getEvaluationResult():
 			func.max(Evaluation.mainTopic).label('max_mainTopic'), func.min(Evaluation.mainTopic).label('min_mainTopic'), func.avg(Evaluation.mainTopic) \
 			.label('avg_mainTopic'), func.max(Evaluation.termSignificance).label('max_termSignificance'), func.min(Evaluation.termSignificance) \
 			.label('min_termSignificance'), func.avg(Evaluation.termSignificance).label('avg_termSignificance')) \
-			.group_by(Evaluation.dtmMethod).group_by(Evaluation.sentenceSelectionMethod).group_by(Evaluation.aspectRatio).filter(Evaluation.dtmMethod.like(dtmMethod)).filter(Evaluation.sentenceSelectionMethod.like(sentenceSelectionMethod)).limit(10).offset((int(page)-1)*10).all()
+			.group_by(Evaluation.dtmMethod).group_by(Evaluation.sentenceSelectionMethod).group_by(Evaluation.aspectRatio)\
+			.filter(Evaluation.dtmMethod.like(dtmMethod)).filter(Evaluation.sentenceSelectionMethod.like(sentenceSelectionMethod))\
+			.order_by(func.avg(Evaluation.termSignificance).desc(), func.avg(Evaluation.mainTopic).desc()).limit(10).offset((int(page)-1)*10).all()
 		
 		else:
 			totalPage = math.ceil(database.query(Evaluation.dtmMethod, Evaluation.sentenceSelectionMethod, Evaluation.aspectRatio,
@@ -75,8 +77,11 @@ def getEvaluationResult():
 			func.max(Evaluation.mainTopic).label('max_mainTopic'), func.min(Evaluation.mainTopic).label('min_mainTopic'), func.avg(Evaluation.mainTopic) \
 			.label('avg_mainTopic'), func.max(Evaluation.termSignificance).label('max_termSignificance'), func.min(Evaluation.termSignificance) \
 			.label('min_termSignificance'), func.avg(Evaluation.termSignificance).label('avg_termSignificance')) \
-			.group_by(Evaluation.dtmMethod).group_by(Evaluation.sentenceSelectionMethod).group_by(Evaluation.aspectRatio).filter(Evaluation.dtmMethod.like(dtmMethod)).filter(Evaluation.sentenceSelectionMethod.like(sentenceSelectionMethod)). \
-			filter(Evaluation.aspectRatio==aspectRatio).limit(10).offset((int(page)-1)*10).all()
+			.group_by(Evaluation.dtmMethod).group_by(Evaluation.sentenceSelectionMethod).group_by(Evaluation.aspectRatio)\
+			.filter(Evaluation.dtmMethod.like(dtmMethod)).filter(Evaluation.sentenceSelectionMethod.like(sentenceSelectionMethod)). \
+			filter(Evaluation.aspectRatio==aspectRatio).order_by(func.avg(Evaluation.termSignificance).desc(), 
+				func.avg(Evaluation.mainTopic).desc())\
+			.limit(10).offset((int(page)-1)*10).all()
 			
 		evaluation = [{'totalPage' : totalPage }]
 		for data in datas:
