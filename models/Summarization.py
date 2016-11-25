@@ -34,7 +34,8 @@ class Summarization(object):
 	
 	def getDTM(self, sentences, binaryMode=False, mode='tfidf'):
 		if(mode=='tf'):
-			self.vectorize = CountVectorizer(min_df=0.0, analyzer=self.stemmed_words, binary=binaryMode, max_df=1.0)
+			# self.vectorize = CountVectorizer(min_df=0.0, analyzer=self.stemmed_words, binary=binaryMode, max_df=1.0)
+			self.vectorize = TfidfVectorizer(min_df=0.0, analyzer=self.stemmed_words, max_df=1.0, use_idf=False, binary=binaryMode)
 		elif(mode=='tfidf'):
 			self.vectorize = TfidfVectorizer(min_df=0.0, analyzer=self.stemmed_words, max_df=1.0)
 		
