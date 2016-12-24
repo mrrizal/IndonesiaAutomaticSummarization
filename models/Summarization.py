@@ -1,4 +1,4 @@
-import nltk.data
+# import nltk.data
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 from sklearn.decomposition import TruncatedSVD
 from sklearn.preprocessing import Normalizer
