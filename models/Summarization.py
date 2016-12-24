@@ -4,7 +4,8 @@ from sklearn.decomposition import TruncatedSVD
 from sklearn.preprocessing import Normalizer
 import pandas as pd
 from numpy import linalg, sqrt, absolute
-from models.stem import IndonesianStemmer 
+from models.stem import IndonesianStemmer
+import pickle 
 # from stem import IndonesianStemmer
 import warnings
 
@@ -14,7 +15,10 @@ warnings.filterwarnings("error")
 class Summarization(object):
 
 	def getSentence(self, text):
-		tokenizer = nltk.data.load('tokenizers/punkt/PY3/indonesia.pickle')
+		# tokenizer = nltk.data.load('tokenizers/punkt/PY3/indonesia.pickle')
+		tokenizer_file = open('static/indonesia.pickle', "rb")
+		tokenizer = pickle.load(tokenizer_file)
+		tokenizer_file.close()
 		sentences = tokenizer.tokenize(text)
 		return sentences
 
