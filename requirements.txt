@@ -1,0 +1,12 @@
+Flask==0.12.1
+nltk==3.2.2
+numpy==1.12.0
+pandas==0.19.2
+Werkzeug==0.12.1
+docx2txt==0.6
+odfpy==1.3.4
+pdfkit==0.6.1
+pdfminer3k
+scikit_learn==0.18.1
+SQLAlchemy==1.1.9
+scipy
